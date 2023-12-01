@@ -12,7 +12,7 @@
 
 import datetime
 from UtilityFunctions import *
-
+from FileFunctions import *
 
 ## CLASSES ##
 
@@ -191,8 +191,4 @@ def DB_Retriever(index, in_archive=False):
 		item = TaskDB[index]
 	return item
 
-
-## DATABASE VARIABLES ##
-
-TaskDB = []
-ArchiveDB = []
+[TaskDB, ArchiveDB] = SafeLoadDB()

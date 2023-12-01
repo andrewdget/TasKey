@@ -135,6 +135,7 @@ class TasKeyUI:
 		if command[0] == 'settings':
 			pass
 		if command[0] == 'kill':
+			SafeSaveDB(TaskDB, ArchiveDB)
 			self.parent.destroy
 			exit()
 		

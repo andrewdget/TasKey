@@ -3,10 +3,9 @@
 
 '''
 
-
 ## DEPENDENCIES ##
-
 from CommandFunctions import *
+from FileFunctions import *
 
 
 ## CONSTANTS ## 
@@ -95,13 +94,13 @@ working_inputs = [
 	'-i aa'
 	]
 
-for i in range(len(initial_inputs)):
-	ComPro(settings, initial_inputs[i])
+# for i in range(len(initial_inputs)):
+# 	ComPro(settings, initial_inputs[i])
 
-command = ComPro(settings, working_inputs[4])
-print(command)
+# command = ComPro(settings, working_inputs[1])
+# print(command)
 
-print(TaskDB[0].name)
+# print(TaskDB[0].name)
 # DispMain(TaskDB)
 
 # ComPro(settings, working_inputs[0])
@@ -111,8 +110,13 @@ print(TaskDB[0].name)
 
 # DispMain(TaskDB)
 # DispArchive(ArchiveDB)
-
 # DsipInfo('aa', True)
+
+
+
+
+
+
 
 
 
