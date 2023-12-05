@@ -30,7 +30,7 @@ class TasKeyUI:
 		self.highlight_color = config['highlight_color']
 		self.text_color = config['text_color']
 
-		hlt = 0 # "1" places box around frames or "naked" text boxes, for debugging
+		hlt = 1 # "1" places box around frames or "naked" text boxes, for debugging
 
 		self.root = tk.Tk()
 
@@ -246,6 +246,7 @@ version = 'v- 00.05.06'
 paths = {
    'Main': '/some/junk/goes/here',
    'S1': '/some/junk/goes/here',
+   'Bubs<3': '/some/junk/goes/here',
    'Dogs': '/some/junk/goes/here',
    'Long Test': '/some/junk/goes/here',
    'Anotha One': '/some/junk/went/here'
