@@ -1,40 +1,43 @@
 ## NOTES ##
 '''
-1. need to set minimum 'nochar'
+
 '''
 
 ## DEPENDENCIES ## 
-
+import pyfiglet
+import datetime
 
 ## DEFINITIONS ##
-
-def ASCII_ProgressBar(nochar, complete, of):
-	progress = complete/of
-	max_bars = nochar - 9
-	no_bars = int(max_bars * progress)
-	no_spaces = max_bars - no_bars
-
-	if progress != 1:
-		bar ='[' + '/'*no_bars + ' '*no_spaces + '] ' + ' ' + str(round(progress*100, 1)) + '%'
-	else:
-		bar ='[' + '/'*no_bars + ' '*no_spaces + '] ' + str(round(progress*100, 1)) + '%'
-	
-	return bar
-
-
 
 
 ## EXECUTABLE ## 
 
-bar1 = ASCII_ProgressBar(55, 2, 2)
-bar2 = ASCII_ProgressBar(55, 23, 48)
-bar3 = ASCII_ProgressBar(55, 8, 10)
+current = datetime.datetime.now()
+
+hour = str(current.hour)
+if len(hour) == 1:
+	hour = '0' + hour
+
+minute = str(current.minute)
+if len(minute) == 1:
+	minute = '0' + minute
 
 
-print()
-print('Critical Tasks ' + bar1)
-print('   Total Tasks ' + bar2)
-print('  Weekly Tasks ' + bar3)
-print()
+weekdays = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
+weekday = weekdays[current.weekday()]
 
-print(round(22.343, 1))
+day = str(current.day)
+
+months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+month = months[current.month - 1] # -1 added due to 0 based indexing
+
+year = str(current.year)
+
+
+datetime_str = hour+':'+minute +'   '+ weekday+'\n' + month+' ' +day+' ' + year
+
+ASCII_datetime = pyfiglet.figlet_format(datetime_str, font='smslant')
+print(ASCII_datetime)
+
+
+
