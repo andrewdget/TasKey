@@ -3,6 +3,7 @@
 1. remove executable seciton once done developing
 2. implement sytle tags (in general and for command line)
 3. develop method for highlighting tags
+4. on resize binding not working with tabs
 
 '''
 
@@ -11,11 +12,15 @@
 import tkinter as tk
 import tkinter.font as tkf
 import pyfiglet
+import datetime
 
 ## DEFINITIONS ##
 
 class TasKeyUI:
 	def __init__(self, version, config, paths):
+
+		hlt = 0 # "1" places box around frames or "naked" text boxes, for debugging
+
 		self.version = version
 		self.paths = paths
 
@@ -30,56 +35,32 @@ class TasKeyUI:
 		self.highlight_color = config['highlight_color']
 		self.text_color = config['text_color']
 
-		hlt = 1 # "1" places box around frames or "naked" text boxes, for debugging
-
 		self.root = tk.Tk()
-
-		self.root_height = self.root.winfo_height()
-		self.root_width = self.root.winfo_width()
-
 		self.root.title('TasKey ' + self.version + ' (Beta)')
-		self.root.configure(height=600, width=1200, bg=self.background_color)
+		self.root.configure(bg=self.background_color)
 
-
-		# generate "TasKey" ASCII header and version subheader
+		# widgets
 		self.header = tk.Text(self.root)
 		self.header.config(
 			bg=self.background_color,
 			fg=self.accent_color,
 			highlightthicknes=hlt,
 			height=5,
-			width=29
+			width=35
 			)
-		self.header.place(x=10, y=10)
-		self.ASCII_name = pyfiglet.figlet_format('TasKey', font='smslant')
-		self.header.insert('1.0', self.ASCII_name)
-		self.header.config(state='disabled')
-		
+
 		self.subheader = tk.Text(self.root)
 		self.subheader.config(
 			bg=self.background_color,
 			fg=self.accent_color,
-			highlightbackground=self.accent_color,
-			highlightthicknes=1,
-			font='Courier',
-			padx=5,
-			height = 4,
-			width=3
-			) 
-		self.subheader.place(x=225, y=23)
-		self.subheader.insert('1.0', self.version)
-		self.subheader.config(state='disabled')
-
-
-		# generate list display frame/window
-		self.listframe = tk.Frame(self.root)
-		self.listframe.config(
-			bg=self.background_color,
 			highlightthicknes=hlt,
-			)
-		self.listframe.place(x=10, y=85, height=505, width=585)
+			font='Courier',
+			height=1,
+			state='disabled',
+			width=0
+			) 
 
-		self.listwin = tk.Text(self.listframe)
+		self.listwin = tk.Text(self.root)
 		self.listwin.config(
 			bg=self.background_color,
 			fg=self.text_color,
@@ -87,18 +68,8 @@ class TasKeyUI:
 			highlightthicknes=2,
 			state='disabled'
 			)
-		self.listwin.pack(expand=True, fill='both')
 
-
-		# generate info display frame/window
-		self.infoframe = tk.Frame(self.root)
-		self.infoframe.config(
-			bg=self.background_color,
-			highlightthicknes=hlt,
-			)
-		self.infoframe.place(x=605, y=300, height=230, width=585)
-
-		self.infowin = tk.Text(self.infoframe)
+		self.infowin = tk.Text(self.root)
 		self.infowin.config(
 			bg=self.background_color,
 			fg=self.text_color,
@@ -106,18 +77,8 @@ class TasKeyUI:
 			highlightthicknes=2,
 			state='disabled'
 			)
-		self.infowin.pack(expand=True, fill='both')
 
-
-		# generate commandline frame/window
-		self.commandframe = tk.Frame(self.root)
-		self.commandframe.config(
-			bg=self.background_color,
-			highlightthicknes=hlt,
-			)
-		self.commandframe.place(x=10, y=540, height=50, width= 1180)
-
-		self.commandwin = tk.Text(self.commandframe)
+		self.commandwin = tk.Text(self.root)
 		self.commandwin.config(
 			bg=self.background_color,
 			fg=self.text_color,
@@ -125,42 +86,80 @@ class TasKeyUI:
 			highlightcolor=self.trim_color,
 			highlightbackground=self.trim_color,
 			highlightthicknes=2,
-			font='Courier'
+			font='Courier',
+			height=3
 			)
-		self.commandwin.pack(expand=True, fill='both')
-		self.commandwin.focus_set()
-		self.commandwin.insert('1.0', 'TasKey >> ')
 
-
-		# generate tab display window
 		self.tabwin = tk.Text(self.root)
 		self.tabwin.config(
 			bg=self.background_color,
 			fg=self.text_color,
 			highlightthicknes=hlt,
 			font='Courier',
-			wrap=tk.NONE
+			wrap=tk.NONE,
+			state='disabled',
+			height=3,
 			)
-		self.tabwin.place(x=285, y=35, height=45, width=905)
-		self.RefreshTabs()
 
-
-		# generate gadgets frame
-		self.gadgetframe = tk.Frame(self.root)
-		self.gadgetframe.config(
+		self.datetimewin = tk.Text(self.root)
+		self.datetimewin.config(
 			bg=self.background_color,
-			highlightthicknes=hlt
+			fg=self.text_color,
+			highlightthicknes=hlt,
+			state='disabled',
+			padx=5,
+			height=5,
 			)
-		self.gadgetframe.place(x=605, y=85, width=585, height=206)
 
+		self.progresswin = tk.Text(self.root)
+		self.progresswin.config(
+			bg=self.background_color,
+			fg=self.text_color,
+			highlightthicknes=hlt,
+			font='Courier',
+			state='disabled',
+			height=3,
+			)
+
+		self.root.columnconfigure(0, weight=0)
+		self.root.columnconfigure(1, weight=1)
+		self.root.columnconfigure(2, weight=1)
+
+		self.root.rowconfigure(0, weight=0)
+		self.root.rowconfigure(1, weight=0)
+		self.root.rowconfigure(2, weight=1)
+		self.root.rowconfigure(3, weight=1)
+		self.root.rowconfigure(4, weight=1)
+		self.root.rowconfigure(5, weight=0)
+
+		self.header.grid(row=0, column=0, padx=5, sticky='nsew')
+		self.subheader.grid(row=1, column=0, padx=5, sticky='nsew')
+		self.listwin.grid(row=2, column=0, rowspan=3, columnspan=2, padx=5, pady=5, sticky='nsew')
+		self.infowin.grid(row=4, column=2, padx=5, pady=5, sticky='nsew')
+		self.commandwin.grid(row=5, column=0, columnspan=3, padx=5, pady=5, sticky='nsew')
+		self.tabwin.grid(row=0, column=1, rowspan=2, columnspan=2, padx=5, sticky='sew')
+		self.datetimewin.grid(row=2, column=2, padx=5, pady=5, sticky='nsew')
+		self.progresswin.grid(row=3, column=2, padx=5, pady=5, sticky='nsew')
+
+		# 
+		self.commandwin.focus_set()
+		self.commandwin.insert('1.0', 'TasKey >> ')
+
+		self.ASCII_name = pyfiglet.figlet_format('TasKey', font='smslant')
+		self.header.insert('1.0', self.ASCII_name)
+		self.header.config(state='disabled')
+
+		self.RefreshTabs()
+		self.ASCII_Datetime()
+		self.ASCII_ProgressBar()
 
 		# bindings
 		self.root.bind('<Configure>', self.OnResize)
 		self.commandwin.bind('<FocusOut>', self.FocusReturn)
 		self.commandwin.bind('<KeyRelease>', self.PromptProtect)
 
-
 		self.root.mainloop()
+
 
 	# definitions 
 	def FocusReturn(self,event):
@@ -175,68 +174,85 @@ class TasKeyUI:
 				self.commandwin.delete('1.0', '1.10')
 				self.commandwin.insert('1.0', 'TasKey >> ')
 
-
 	def OnResize(self, event):
-		self.root_height = self.root.winfo_height()
-		self.root_width = self.root.winfo_width()
-
-		self.listframe.place(
-			x=10,
-			y=85, 
-			height=self.root_height-155,
-			width=self.root_width/2 - 15
-			)
-
-		self.infoframe.place(
-			x=self.root_width/2 + 5,
-			y=300,
-			height=self.root_height-370,
-			width=self.root_width/2 - 15 
-			)
-
-		self.commandframe.place(
-			x=10,
-			y=self.root_height-60,
-			height=50,
-			width=self.root_width-20
-			)
-
-		self.tabwin.place(
-			x=285,
-			y=35,
-			height=45,
-			width=self.root_width-295
-			)
-		self.RefreshTabs()
-
-		self.gadgetframe.place(
-			x=self.root_width/2 + 5,
-			y=85,
-			height=206,
-			width=self.root_width/2 - 15
-			)
-
+		# self.RefreshTabs()
+		pass
+		
 
 	def RefreshTabs(self):
-		path_names = list(self.paths.keys())
-		line1 = ''
-		line2 = ''
-		for name in path_names:
-			nochars = len(name)
-			line1 = line1 + ' ' + '_'*nochars + ' '
-			line2 = line2 + '/'+name+'\\'
-		tabs = line1 + '\n' + line2
-		self.tabwin.delete('1.0', tk.END)
-		self.tabwin.insert('1.0', tabs)
+			path_names = list(self.paths.keys())
+			line1 = ''
+			line2 = ''
+			for name in path_names:
+				nochars = len(name)
+				line1 = line1 + ' ' + '_'*nochars + ' '
+				line2 = line2 + '/'+name+'\\'
+			tabs = line1 + '\n' + line2
+			self.tabwin.config(state='normal')
+			self.tabwin.delete('1.0', tk.END)
+			self.tabwin.insert('1.0', tabs)
 
-		charwidth = tkf.Font(font='Courier').measure('/')
-		maxchar = int((self.root_width-295)/charwidth - 1)
+			self.root.update()
+			[x,y,w,h] = self.root.grid_bbox(1, 0, 2, 1)
+			
+			charwidth = tkf.Font(font='Courier').measure('/')
+			maxchar = int(w/charwidth - 10)
 
-		# insures backslashes are at least as long as tabs, even when wrapped
-		if len(line2) > maxchar:
-			self.tabwin.insert('3.0', '\n' + '\\'*len(line2))
+			# insures backslashes are at least as long as tabs, even when wrapped
+			if len(line2) > maxchar:
+				self.tabwin.insert('3.0', '\n' + '\\'*len(line2))
+			else:
+				self.tabwin.insert('3.0', '\n' + '\\'*maxchar)
+			self.tabwin.config(state='disabled')
+
+
+	def ASCII_Datetime(self):
+		current = datetime.datetime.now()
+
+		hour = str(current.hour)
+		if len(hour) == 1:
+			hour = '0' + hour
+		minute = str(current.minute)
+		if len(minute) == 1:
+			minute = '0' + minute
+
+		weekdays = ['Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa', 'Su']
+		weekday = weekdays[current.weekday()]
+		day = str(current.day)
+		month = str(current.month)
+		year = str(current.year)
+
+		datetime_str = hour+':'+minute +' '+ weekday+' ' + month+'.' +day
+		ASCII_datetime = pyfiglet.figlet_format(datetime_str, font='smslant')
+
+		self.datetimewin.config(state='normal')
+		self.datetimewin.delete('1.0', tk.END)
+		self.datetimewin.insert('1.0', ASCII_datetime)
+		self.datetimewin.config(state='disabled')
+
+		self.root.after(1000, self.ASCII_Datetime)
+
+
+	def ASCII_ProgressBar(self):
+		nochar = 55
+		complete = 23
+		of = 50
+		progress = complete/of
+		max_bars = nochar - 9
+		no_bars = int(max_bars * progress)
+		no_spaces = max_bars - no_bars
+
+		if progress != 1:
+			bar ='[' + '/'*no_bars + ' '*no_spaces + '] ' + ' ' + str(round(progress*100, 1)) + '%' + '\n'
 		else:
-			self.tabwin.insert('3.0', '\n' + '\\'*maxchar)
+			bar ='[' + '/'*no_bars + ' '*no_spaces + '] ' + str(round(progress*100, 1)) + '%' + '\n'
+		
+		self.progresswin.config(state='normal')
+		self.progresswin.delete('1.0', tk.END)
+		self.progresswin.insert('1.0', 'Critical Tasks ' + bar)
+		self.progresswin.insert('2.0', '   Total Tasks ' + bar)
+		self.progresswin.insert('3.0', '  Weekly Tasks ' + bar)
+		self.progresswin.config(state='disabled')
 
 
 ## EXECUTABLE ## 
