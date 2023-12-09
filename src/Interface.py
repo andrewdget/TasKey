@@ -1,8 +1,7 @@
 ## NOTES ##
 '''
-1. remove executable seciton once done developing
-2. remove temporary hard coded progress values
-4. keep an eye on clock performance, may need to switch to using multiprocessing
+1. progress bar values are currently hard coded
+2. monitor clock performance, may need to switch to using multiprocessing
 '''
 
 ## DEPENDENCIES ## 
@@ -18,7 +17,7 @@ class TasKeyUI:
 	def __init__(self, version, config, paths):
 
 		# development setting
-		hlt = 0 # "1" places box around frames or "naked" text boxes, for debugging
+		hlt = 0 # '1' places box around naked frames/text boxes for dev purposes
 
 		self.version = version
 		self.paths = paths
@@ -58,17 +57,6 @@ class TasKeyUI:
 			height=5,
 			width=30
 			)
-
-		self.subheader = tk.Text(self.root)
-		self.subheader.config(
-			bg=self.background_color,
-			fg=self.header_color,
-			highlightthicknes=hlt,
-			font='Courier',
-			padx=10,
-			height=1,
-			width=0
-			) 
 
 		self.listwin = tk.Text(self.root)
 		self.listwin.config(
@@ -149,18 +137,16 @@ class TasKeyUI:
 		self.root.rowconfigure(0, weight=0)
 		self.root.rowconfigure(1, weight=0)
 		self.root.rowconfigure(2, weight=0)
-		self.root.rowconfigure(3, weight=0)
-		self.root.rowconfigure(4, weight=1)
-		self.root.rowconfigure(5, weight=0)
+		self.root.rowconfigure(3, weight=1)
+		self.root.rowconfigure(4, weight=0)
 
 		self.header.grid(row=0, column=0, padx=5, sticky='nsew')
-		self.subheader.grid(row=1, column=0, rowspan=2, padx=5, sticky='nsew')
-		self.listwin.grid(row=2, column=0, rowspan=3, columnspan=2, padx=5, pady=5, sticky='nsew')
-		self.infowin.grid(row=4, column=2, padx=5, pady=5, sticky='nsew')
-		self.commandwin.grid(row=5, column=0, columnspan=3, padx=5, pady=5, sticky='nsew')
-		self.tabwin.grid(row=0, column=1, rowspan=2, columnspan=2, padx=5, sticky='sew')
-		self.datetimewin.grid(row=2, column=2, padx=5, pady=5, sticky='nsew')
-		self.progresswin.grid(row=3, column=2, padx=5, pady=5, sticky='nsew')
+		self.listwin.grid(row=1, column=0, rowspan=3, columnspan=2, padx=5, pady=5, sticky='nsew')
+		self.infowin.grid(row=3, column=2, padx=5, pady=5, sticky='nsew')
+		self.commandwin.grid(row=4, column=0, columnspan=3, padx=5, pady=5, sticky='nsew')
+		self.tabwin.grid(row=0, column=1, columnspan=2, padx=5, sticky='sew')
+		self.datetimewin.grid(row=1, column=2, padx=5, pady=5, sticky='nsew')
+		self.progresswin.grid(row=2, column=2, padx=5, pady=5, sticky='nsew')
 
 
 		# set initial conditions
@@ -220,7 +206,7 @@ class TasKeyUI:
 				self.tabwin.insert('1.end', line1)
 				self.tabwin.insert('2.end', line2)
 
-		[x,y,w,h] = self.root.grid_bbox(1, 0, 2, 1)
+		[x,y,w,h] = self.root.grid_bbox(1, 0, 2, 0)
 		charwidth = tkf.Font(font='Courier').measure('/')
 		maxchars = int(w/charwidth - 3)
 		tab_len = len(self.tabwin.get('2.0', '2.end'))
@@ -287,7 +273,7 @@ class TasKeyUI:
 				else:
 					self.progresswin.insert(tk.END, char)
 
-		[x,y,w,h] = self.root.grid_bbox(2, 3)
+		[x,y,w,h] = self.root.grid_bbox(2, 2)
 		packaging_length = tkf.Font(font='Courier').measure('Critical Tasks [] 000.0%')
 		charwidth = tkf.Font(font='Courier').measure('/')
 		barchar_length = int((w - packaging_length)/charwidth - 3)
@@ -349,10 +335,4 @@ config = {
 	'tab_bar_color': 'slategray3'
 	}
 
-# good colors
-	# paleturquoise1
-	# navajo white
-	# firebrick3
-
 TasKeyUI(version, config,  paths)
-
