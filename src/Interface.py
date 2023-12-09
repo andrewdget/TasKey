@@ -2,7 +2,6 @@
 '''
 1. remove executable seciton once done developing
 2. remove temporary hard coded progress values
-3. develop lengthwise color/tag function
 4. keep an eye on clock performance, may need to switch to using multiprocessing
 '''
 
@@ -27,6 +26,7 @@ class TasKeyUI:
 		# import styles from config
 		self.background_color = config['background_color']
 		self.header_color = config['header_color']
+		self.prompt_color = config['prompt_color']
 		self.datetime_color = config['datetime_color']
 		self.trim_color = config['trim_color']
 		self.text_color = config['text_color']
@@ -65,8 +65,8 @@ class TasKeyUI:
 			fg=self.header_color,
 			highlightthicknes=hlt,
 			font='Courier',
+			padx=10,
 			height=1,
-			state='disabled',
 			width=0
 			) 
 
@@ -97,11 +97,12 @@ class TasKeyUI:
 			highlightthicknes=2,
 			font='Courier',
 			insertofftime=300,
+			padx=5,
 			insertwidth=6,
 			insertbackground=self.cursor_color,
 			height=3
 			)
-		self.commandwin.tag_config('highlight', foreground=self.highlight_color)
+		self.commandwin.tag_config('highlight', foreground=self.prompt_color)
 
 		self.tabwin = tk.Text(self.root)
 		self.tabwin.config(
@@ -114,6 +115,7 @@ class TasKeyUI:
 			height=3,
 			)
 		self.tabwin.tag_config('bar', foreground=self.tab_bar_color)
+		self.tabwin.tag_config('highlight', foreground=self.highlight_color)
 
 		self.datetimewin = tk.Text(self.root)
 		self.datetimewin.config(
@@ -152,7 +154,7 @@ class TasKeyUI:
 		self.root.rowconfigure(5, weight=0)
 
 		self.header.grid(row=0, column=0, padx=5, sticky='nsew')
-		self.subheader.grid(row=1, column=0, padx=5, sticky='nsew')
+		self.subheader.grid(row=1, column=0, rowspan=2, padx=5, sticky='nsew')
 		self.listwin.grid(row=2, column=0, rowspan=3, columnspan=2, padx=5, pady=5, sticky='nsew')
 		self.infowin.grid(row=4, column=2, padx=5, pady=5, sticky='nsew')
 		self.commandwin.grid(row=5, column=0, columnspan=3, padx=5, pady=5, sticky='nsew')
@@ -170,7 +172,7 @@ class TasKeyUI:
 		self.header.config(state='disabled')
 
 		self.root.update()
-		self.RefreshTabs()
+		self.PathTabs()
 		self.ASCII_Datetime()
 		self.ASCII_ProgressBar()
 
@@ -198,33 +200,38 @@ class TasKeyUI:
 
 
 	def OnResize(self, event):
-		self.RefreshTabs()
+		self.PathTabs()
 		self.ASCII_ProgressBar()
 		
 
-	def RefreshTabs(self):
-			path_names = list(self.paths.keys())
-			line1 = ''
-			line2 = ''
-			for name in path_names:
-				nochars = len(name)
-				line1 = line1 + ' ' + '_'*nochars + ' '
-				line2 = line2 + '/'+name+'\\'
-			tabs = line1 + '\n' + line2
-			self.tabwin.config(state='normal')
-			self.tabwin.delete('1.0', tk.END)
-			self.tabwin.insert('1.0', tabs)
-
-			[x,y,w,h] = self.root.grid_bbox(1, 0, 2, 1)
-			charwidth = tkf.Font(font='Courier').measure('/')
-			maxchars = int(w/charwidth - 2)
-
-			# insures backslashes are at least as long as tabs, even when wrapped
-			if len(line2) > maxchars:
-				self.tabwin.insert('3.0', '\n' + '\\'*len(line2), 'bar')
+	def PathTabs(self):
+		self.tabwin.config(state='normal')
+		self.tabwin.delete('1.0', tk.END)
+		self.tabwin.insert('1.0', '\n\n') # creates required lines
+		path_names = list(self.paths.keys())
+		for name in path_names:
+			nochars = len(name)
+			line1 = ' ' + '_'*nochars + ' '
+			line2 = '/' + name + '\\'
+			if name == self.current_tab:
+				self.tabwin.insert('1.end', line1, 'highlight')
+				self.tabwin.insert('2.end', line2, 'highlight')
 			else:
-				self.tabwin.insert('3.0', '\n' + '\\'*maxchars, 'bar')
-			self.tabwin.config(state='disabled')
+				self.tabwin.insert('1.end', line1)
+				self.tabwin.insert('2.end', line2)
+
+		[x,y,w,h] = self.root.grid_bbox(1, 0, 2, 1)
+		charwidth = tkf.Font(font='Courier').measure('/')
+		maxchars = int(w/charwidth - 3)
+		tab_len = len(self.tabwin.get('2.0', '2.end'))
+
+		# insures backslashes are at least as long as tabs, even when wrapped
+		if tab_len > maxchars:
+			self.tabwin.insert('3.0', '\\'*(tab_len + 1), 'bar')
+		else:
+			self.tabwin.insert('3.0', '\\'*maxchars, 'bar')
+
+		self.tabwin.config(state='disabled')
 
 
 	def ASCII_Datetime(self):
@@ -328,18 +335,24 @@ paths = {
 config = {
 	'background_color': 'black',
 	'header_color': 'orange',
+	'prompt_color': 'mediumpurple2',
 	'datetime_color': 'deepskyblue',
 	'trim_color': 'darkslategray',
 	'text_color': 'paleturquoise1',
-	'highlight_color': 'red',
-	'cursor_color': 'white',
+	'highlight_color': 'mediumpurple2',
+	'cursor_color': 'paleturquoise1',
 	'progressbar_color': 'slategray3',
 	'progress_good_color': 'green',
 	'progress_med_color': 'orange',
 	'progress_bad_color': 'red',
-	'tab_color': 'white',
+	'tab_color': 'slategray3',
 	'tab_bar_color': 'slategray3'
 	}
+
+# good colors
+	# paleturquoise1
+	# navajo white
+	# firebrick3
 
 TasKeyUI(version, config,  paths)
 
