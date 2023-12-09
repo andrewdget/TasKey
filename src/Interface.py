@@ -32,10 +32,12 @@ class TasKeyUI:
 		self.text_color = config['text_color']
 		self.highlight_color = config['highlight_color']
 		self.cursor_color = config['cursor_color']
+		self.progressbar_color = config['progressbar_color']
 		self.progress_good_color = config['progress_good_color']
 		self.progress_med_color = config['progress_med_color']
 		self.progress_bad_color = config['progress_bad_color']
 		self.tab_color = config['tab_color']
+		self.tab_bar_color = config['tab_bar_color']
 
 		# set current state variables
 		self.current_win = 'Tasks'
@@ -54,7 +56,7 @@ class TasKeyUI:
 			highlightthicknes=hlt,
 			padx=10,
 			height=5,
-			width=35
+			width=30
 			)
 
 		self.subheader = tk.Text(self.root)
@@ -111,6 +113,7 @@ class TasKeyUI:
 			state='disabled',
 			height=3,
 			)
+		self.tabwin.tag_config('bar', foreground=self.tab_bar_color)
 
 		self.datetimewin = tk.Text(self.root)
 		self.datetimewin.config(
@@ -125,7 +128,7 @@ class TasKeyUI:
 		self.progresswin = tk.Text(self.root)
 		self.progresswin.config(
 			bg=self.background_color,
-			fg=self.text_color,
+			fg=self.progressbar_color,
 			highlightthicknes=hlt,
 			font='Courier',
 			state='disabled',
@@ -218,9 +221,9 @@ class TasKeyUI:
 
 			# insures backslashes are at least as long as tabs, even when wrapped
 			if len(line2) > maxchars:
-				self.tabwin.insert('3.0', '\n' + '\\'*len(line2))
+				self.tabwin.insert('3.0', '\n' + '\\'*len(line2), 'bar')
 			else:
-				self.tabwin.insert('3.0', '\n' + '\\'*maxchars)
+				self.tabwin.insert('3.0', '\n' + '\\'*maxchars, 'bar')
 			self.tabwin.config(state='disabled')
 
 
@@ -285,22 +288,22 @@ class TasKeyUI:
 		self.progresswin.config(state='normal')
 		self.progresswin.delete('1.0', tk.END)
 
-		critical = 2
-		critical_complete = 2
+		critical = 5
+		critical_complete = 1
 		critical_precent = str(round((critical_complete/critical)*100, 1))
 		self.progresswin.insert('1.0', 'Critical Tasks [')
 		BarColor(critical_complete, critical, barchar_length, 0.5, 0.75)
 		self.progresswin.insert(tk.END, '] ' + critical_precent + '%' + '\n')
 
 		weekly = 10
-		weekly_complete = 10
+		weekly_complete = 5
 		weekly_precent = str(round((weekly_complete/weekly)*100, 1))
 		self.progresswin.insert('2.0', '  Weekly Tasks [')
 		BarColor(weekly_complete, weekly, barchar_length, 0.25, 0.5)
 		self.progresswin.insert(tk.END, '] ' + weekly_precent + '%' + '\n')
 
 		total = 28
-		total_complete  = 28
+		total_complete  = 8
 		total_precent = str(round((total_complete/total)*100, 1))
 		self.progresswin.insert('3.0', '   Total Tasks [')
 		BarColor(total_complete, total, barchar_length, 0.1, 0.25)
@@ -325,15 +328,17 @@ paths = {
 config = {
 	'background_color': 'black',
 	'header_color': 'orange',
-	'datetime_color': 'turquoise1',
-	'trim_color': 'grey40',
-	'text_color': 'white',
+	'datetime_color': 'deepskyblue',
+	'trim_color': 'darkslategray',
+	'text_color': 'paleturquoise1',
 	'highlight_color': 'red',
 	'cursor_color': 'white',
+	'progressbar_color': 'slategray3',
 	'progress_good_color': 'green',
 	'progress_med_color': 'orange',
 	'progress_bad_color': 'red',
-	'tab_color': 'white'
+	'tab_color': 'white',
+	'tab_bar_color': 'slategray3'
 	}
 
 TasKeyUI(version, config,  paths)
