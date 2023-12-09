@@ -6,6 +6,7 @@
 4. need to get resize function working properly w/ applicable widgets
 5. keep an eye on clock performance, may need to switch to using multiprocessing
 6. set cursor to always on and a thicker marker
+7. Font.measure is not calculating as expected
 '''
 
 ## DEPENDENCIES ## 
@@ -54,6 +55,7 @@ class TasKeyUI:
 			bg=self.background_color,
 			fg=self.header_color,
 			highlightthicknes=hlt,
+			padx=10,
 			height=5,
 			width=35
 			)
@@ -144,8 +146,8 @@ class TasKeyUI:
 
 		self.root.rowconfigure(0, weight=0)
 		self.root.rowconfigure(1, weight=0)
-		self.root.rowconfigure(2, weight=1)
-		self.root.rowconfigure(3, weight=1)
+		self.root.rowconfigure(2, weight=0)
+		self.root.rowconfigure(3, weight=0)
 		self.root.rowconfigure(4, weight=1)
 		self.root.rowconfigure(5, weight=0)
 
@@ -191,6 +193,7 @@ class TasKeyUI:
 				self.commandwin.delete('1.0', '1.10')
 				self.commandwin.insert('1.0', 'TasKey >> ', 'highlight')
 
+
 	def OnResize(self, event):
 		# self.RefreshTabs()
 		pass
@@ -213,13 +216,13 @@ class TasKeyUI:
 			[x,y,w,h] = self.root.grid_bbox(1, 0, 2, 1)
 			
 			charwidth = tkf.Font(font='Courier').measure('/')
-			maxchar = int(w/charwidth - 10)
+			maxchars = int(w/charwidth - 10)
 
 			# insures backslashes are at least as long as tabs, even when wrapped
-			if len(line2) > maxchar:
+			if len(line2) > maxchars:
 				self.tabwin.insert('3.0', '\n' + '\\'*len(line2))
 			else:
-				self.tabwin.insert('3.0', '\n' + '\\'*maxchar)
+				self.tabwin.insert('3.0', '\n' + '\\'*maxchars)
 			self.tabwin.config(state='disabled')
 
 
@@ -251,24 +254,58 @@ class TasKeyUI:
 
 
 	def ASCII_ProgressBar(self):
-		nochar = 55
-		complete = 22
-		of = 51
-		progress = complete/of
-		max_bars = nochar - 9
-		no_bars = int(max_bars * progress)
-		no_spaces = max_bars - no_bars
+		def BarColor(complete, of, barchar_length, bad, med):
+			precent = complete/of
+			no_bars = int(barchar_length * precent)
+			no_space = barchar_length - no_bars
 
-		if progress != 1:
-			bar ='[' + '/'*no_bars + ' '*no_spaces + '] ' + ' ' + str(round(progress*100, 1)) + '%' + '\n'
-		else:
-			bar ='[' + '/'*no_bars + ' '*no_spaces + '] ' + str(round(progress*100, 1)) + '%' + '\n'
-		
+			rel_bad = int(barchar_length*bad)
+			rel_med = int(barchar_length*med)
+
+			bar = '/'*no_bars + '-'*no_space
+			for i in range(len(bar)):
+				char = bar[i]
+				if char == '/':
+					if i < rel_bad:
+						self.progresswin.insert(tk.END, char, 'bad')
+					elif i < rel_med:
+						self.progresswin.insert(tk.END, char, 'med')
+					else:
+						self.progresswin.insert(tk.END, char, 'good')
+				else:
+					self.progresswin.insert(tk.END, char)
+
+
+		self.root.update()
+		[x,y,w,h] = self.root.grid_bbox(1, 0, 2, 1)
+		packaging_length = tkf.Font(font='Courier').measure('Critical Tasks [] 00.0%')
+		charwidth = tkf.Font(font='Courier').measure('/')
+		barchar_length = int((w - packaging_length)/(charwidth*2))
+
 		self.progresswin.config(state='normal')
 		self.progresswin.delete('1.0', tk.END)
-		self.progresswin.insert('1.0', 'Critical Tasks ' + bar)
-		self.progresswin.insert('2.0', '   Total Tasks ' + bar)
-		self.progresswin.insert('3.0', '  Weekly Tasks ' + bar)
+
+		critical = 2
+		critical_complete = 2
+		critical_precent = str(round((critical_complete/critical)*100, 1))
+		self.progresswin.insert('1.0', 'Critical Tasks [')
+		BarColor(critical_complete, critical, barchar_length, 0.5, 0.75)
+		self.progresswin.insert(tk.END, '] ' + critical_precent + '%' + '\n')
+
+		weekly = 10
+		weekly_complete = 10
+		weekly_precent = str(round((weekly_complete/weekly)*100, 1))
+		self.progresswin.insert('2.0', '  Weekly Tasks [')
+		BarColor(weekly_complete, weekly, barchar_length, 0.25, 0.5)
+		self.progresswin.insert(tk.END, '] ' + weekly_precent + '%' + '\n')
+
+		total = 28
+		total_complete  = 28
+		total_precent = str(round((total_complete/total)*100, 1))
+		self.progresswin.insert('3.0', '   Total Tasks [')
+		BarColor(total_complete, total, barchar_length, 0.1, 0.25)
+		self.progresswin.insert(tk.END, '] ' + total_precent + '%')
+
 		self.progresswin.config(state='disabled')
 
 
