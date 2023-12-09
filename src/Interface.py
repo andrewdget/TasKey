@@ -2,9 +2,10 @@
 '''
 1. remove executable seciton once done developing
 2. implement sytle tags (in general and for command line)
-3. develop method for highlighting tags
-4. on resize binding not working with tabs
-
+3. develop lengthwise color/tag function
+4. need to get resize function working properly w/ applicable widgets
+5. keep an eye on clock performance, may need to switch to using multiprocessing
+6. set cursor to always on and a thicker marker
 '''
 
 ## DEPENDENCIES ## 
@@ -19,21 +20,29 @@ import datetime
 class TasKeyUI:
 	def __init__(self, version, config, paths):
 
+		# development setting
 		hlt = 0 # "1" places box around frames or "naked" text boxes, for debugging
 
 		self.version = version
 		self.paths = paths
 
+		# import styles from config
+		self.background_color = config['background_color']
+		self.header_color = config['header_color']
+		self.datetime_color = config['datetime_color']
+		self.trim_color = config['trim_color']
+		self.text_color = config['text_color']
+		self.highlight_color = config['highlight_color']
+		self.cursor_color = config['cursor_color']
+		self.progress_good_color = config['progress_good_color']
+		self.progress_med_color = config['progress_med_color']
+		self.progress_bad_color = config['progress_bad_color']
+		self.tab_color = config['tab_color']
+
+		# set current state variables
 		self.current_win = 'Tasks'
 		self.current_tab = list(self.paths.keys())[0]
 		self.current_sel = 'aa'
-
-		# import styles from config
-		self.background_color = config['background_color']
-		self.accent_color = config['accent_color']
-		self.trim_color = config['trim_color']
-		self.highlight_color = config['highlight_color']
-		self.text_color = config['text_color']
 
 		self.root = tk.Tk()
 		self.root.title('TasKey ' + self.version + ' (Beta)')
@@ -43,7 +52,7 @@ class TasKeyUI:
 		self.header = tk.Text(self.root)
 		self.header.config(
 			bg=self.background_color,
-			fg=self.accent_color,
+			fg=self.header_color,
 			highlightthicknes=hlt,
 			height=5,
 			width=35
@@ -52,7 +61,7 @@ class TasKeyUI:
 		self.subheader = tk.Text(self.root)
 		self.subheader.config(
 			bg=self.background_color,
-			fg=self.accent_color,
+			fg=self.header_color,
 			highlightthicknes=hlt,
 			font='Courier',
 			height=1,
@@ -82,18 +91,21 @@ class TasKeyUI:
 		self.commandwin.config(
 			bg=self.background_color,
 			fg=self.text_color,
-			insertbackground=self.text_color,
 			highlightcolor=self.trim_color,
 			highlightbackground=self.trim_color,
 			highlightthicknes=2,
 			font='Courier',
+			insertofftime=300,
+			insertwidth=6,
+			insertbackground=self.cursor_color,
 			height=3
 			)
+		self.commandwin.tag_config('highlight', foreground=self.highlight_color)
 
 		self.tabwin = tk.Text(self.root)
 		self.tabwin.config(
 			bg=self.background_color,
-			fg=self.text_color,
+			fg=self.tab_color,
 			highlightthicknes=hlt,
 			font='Courier',
 			wrap=tk.NONE,
@@ -104,7 +116,7 @@ class TasKeyUI:
 		self.datetimewin = tk.Text(self.root)
 		self.datetimewin.config(
 			bg=self.background_color,
-			fg=self.text_color,
+			fg=self.datetime_color,
 			highlightthicknes=hlt,
 			state='disabled',
 			padx=5,
@@ -118,8 +130,13 @@ class TasKeyUI:
 			highlightthicknes=hlt,
 			font='Courier',
 			state='disabled',
+			padx=5,
+			pady=5,
 			height=3,
 			)
+		self.progresswin.tag_config('good', foreground=self.progress_good_color)
+		self.progresswin.tag_config('med', foreground=self.progress_med_color)	
+		self.progresswin.tag_config('bad', foreground=self.progress_bad_color)
 
 		self.root.columnconfigure(0, weight=0)
 		self.root.columnconfigure(1, weight=1)
@@ -141,9 +158,9 @@ class TasKeyUI:
 		self.datetimewin.grid(row=2, column=2, padx=5, pady=5, sticky='nsew')
 		self.progresswin.grid(row=3, column=2, padx=5, pady=5, sticky='nsew')
 
-		# 
+		# set initial conditions
 		self.commandwin.focus_set()
-		self.commandwin.insert('1.0', 'TasKey >> ')
+		self.commandwin.insert('1.0', 'TasKey >> ', 'highlight')
 
 		self.ASCII_name = pyfiglet.figlet_format('TasKey', font='smslant')
 		self.header.insert('1.0', self.ASCII_name)
@@ -172,7 +189,7 @@ class TasKeyUI:
 		if int(cursor_line) == 1:
 			if int(cursor_column) < 10:
 				self.commandwin.delete('1.0', '1.10')
-				self.commandwin.insert('1.0', 'TasKey >> ')
+				self.commandwin.insert('1.0', 'TasKey >> ', 'highlight')
 
 	def OnResize(self, event):
 		# self.RefreshTabs()
@@ -235,8 +252,8 @@ class TasKeyUI:
 
 	def ASCII_ProgressBar(self):
 		nochar = 55
-		complete = 23
-		of = 50
+		complete = 22
+		of = 51
 		progress = complete/of
 		max_bars = nochar - 9
 		no_bars = int(max_bars * progress)
@@ -270,11 +287,17 @@ paths = {
 
 config = {
 	'background_color': 'black',
-	'accent_color': 'orange',
+	'header_color': 'orange',
+	'datetime_color': 'turquoise1',
 	'trim_color': 'grey40',
+	'text_color': 'white',
 	'highlight_color': 'red',
-	'text_color': 'white'
+	'cursor_color': 'white',
+	'progress_good_color': 'green',
+	'progress_med_color': 'orange',
+	'progress_bad_color': 'red',
+	'tab_color': 'white'
 	}
 
-TasKeyUI(version, config, paths)
+TasKeyUI(version, config,  paths)
 
