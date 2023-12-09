@@ -1,12 +1,9 @@
 ## NOTES ##
 '''
 1. remove executable seciton once done developing
-2. implement sytle tags (in general and for command line)
+2. remove temporary hard coded progress values
 3. develop lengthwise color/tag function
-4. need to get resize function working properly w/ applicable widgets
-5. keep an eye on clock performance, may need to switch to using multiprocessing
-6. set cursor to always on and a thicker marker
-7. Font.measure is not calculating as expected
+4. keep an eye on clock performance, may need to switch to using multiprocessing
 '''
 
 ## DEPENDENCIES ## 
@@ -160,6 +157,7 @@ class TasKeyUI:
 		self.datetimewin.grid(row=2, column=2, padx=5, pady=5, sticky='nsew')
 		self.progresswin.grid(row=3, column=2, padx=5, pady=5, sticky='nsew')
 
+
 		# set initial conditions
 		self.commandwin.focus_set()
 		self.commandwin.insert('1.0', 'TasKey >> ', 'highlight')
@@ -168,9 +166,11 @@ class TasKeyUI:
 		self.header.insert('1.0', self.ASCII_name)
 		self.header.config(state='disabled')
 
+		self.root.update()
 		self.RefreshTabs()
 		self.ASCII_Datetime()
 		self.ASCII_ProgressBar()
+
 
 		# bindings
 		self.root.bind('<Configure>', self.OnResize)
@@ -195,8 +195,8 @@ class TasKeyUI:
 
 
 	def OnResize(self, event):
-		# self.RefreshTabs()
-		pass
+		self.RefreshTabs()
+		self.ASCII_ProgressBar()
 		
 
 	def RefreshTabs(self):
@@ -212,11 +212,9 @@ class TasKeyUI:
 			self.tabwin.delete('1.0', tk.END)
 			self.tabwin.insert('1.0', tabs)
 
-			self.root.update()
 			[x,y,w,h] = self.root.grid_bbox(1, 0, 2, 1)
-			
 			charwidth = tkf.Font(font='Courier').measure('/')
-			maxchars = int(w/charwidth - 10)
+			maxchars = int(w/charwidth - 2)
 
 			# insures backslashes are at least as long as tabs, even when wrapped
 			if len(line2) > maxchars:
@@ -250,6 +248,10 @@ class TasKeyUI:
 		self.datetimewin.insert('1.0', ASCII_datetime)
 		self.datetimewin.config(state='disabled')
 
+		layer = ASCII_datetime.split('\n')[0]
+		width = tkf.Font(font='Courier').measure(layer)
+		self.root.columnconfigure(2, minsize=width)
+
 		self.root.after(1000, self.ASCII_Datetime)
 
 
@@ -275,12 +277,10 @@ class TasKeyUI:
 				else:
 					self.progresswin.insert(tk.END, char)
 
-
-		self.root.update()
-		[x,y,w,h] = self.root.grid_bbox(1, 0, 2, 1)
-		packaging_length = tkf.Font(font='Courier').measure('Critical Tasks [] 00.0%')
+		[x,y,w,h] = self.root.grid_bbox(2, 3)
+		packaging_length = tkf.Font(font='Courier').measure('Critical Tasks [] 000.0%')
 		charwidth = tkf.Font(font='Courier').measure('/')
-		barchar_length = int((w - packaging_length)/(charwidth*2))
+		barchar_length = int((w - packaging_length)/charwidth - 3)
 
 		self.progresswin.config(state='normal')
 		self.progresswin.delete('1.0', tk.END)
