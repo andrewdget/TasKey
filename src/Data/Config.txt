@@ -8,6 +8,14 @@ any form of validation. Modify and/or add with caution.'''
 '''
 
 config = {
+
+	## GENERAL SETTINGS ##
+
+	'username': 'NO_USERNAME',
+
+
+	## COLOR SCHEME SETTINGS ##
+
 	'background_color': 'black',
 	'header_color': 'orange',
 	'prompt_color': 'mediumpurple2',
@@ -21,5 +29,32 @@ config = {
 	'progress_med_color': 'orange',
 	'progress_bad_color': 'red',
 	'tab_color': 'slategray3',
-	'tab_bar_color': 'slategray3'
+	'tab_bar_color': 'slategray3',
+
+
+	## REGULAR WORK DAY SETTINGS ##
+	# "True" indicates the associated weeday is a regular work day.
+
+	'Mon': True,
+	'Tue': True,
+	'Wed': True,
+	'Thu': True,
+	'Fri': True,
+	'Sat': False,
+	'Sun': False,
+
+
+	## TASK TIMELINE (BASED ON PRIORITY) SETTINGS ##
+	# This setting affects the default number of work weeks (based on regular 
+	# work day settings above) given to complete a task based on priority, when
+	# a explicitly deadline is NOT given. For example, if "high_period": 1 this 
+	# means a high priority task will be given a deadline 1 work week from its 
+	# date of creation.
+	# Note: Critical tasks, unless provided an explicit deadline, are
+	# automaticaly assigned a deadline of the same day as they are created.
+
+	'high_period': 1,
+	'medium_period': 2,
+	'low_period': 3,
+
 	}
