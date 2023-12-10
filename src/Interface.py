@@ -63,7 +63,7 @@ class TasKeyUI:
 			bg=self.background_color,
 			fg=self.text_color,
 			highlightbackground=self.trim_color,
-			highlightthicknes=2,
+			highlightthicknes=1,
 			state='disabled'
 			)
 
@@ -72,7 +72,7 @@ class TasKeyUI:
 			bg=self.background_color,
 			fg=self.text_color,
 			highlightbackground=self.trim_color,
-			highlightthicknes=2,
+			highlightthicknes=1,
 			state='disabled'
 			)
 
@@ -82,7 +82,7 @@ class TasKeyUI:
 			fg=self.text_color,
 			highlightcolor=self.trim_color,
 			highlightbackground=self.trim_color,
-			highlightthicknes=2,
+			highlightthicknes=1,
 			font='Courier',
 			insertofftime=300,
 			padx=5,
@@ -230,13 +230,13 @@ class TasKeyUI:
 		if len(minute) == 1:
 			minute = '0' + minute
 
-		weekdays = ['Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa', 'Su']
+		weekdays = ['Mon', 'Tus', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
 		weekday = weekdays[current.weekday()]
 		day = str(current.day)
 		month = str(current.month)
 		year = str(current.year)
 
-		datetime_str = hour+':'+minute +' '+ weekday+' ' + month+'.' +day
+		datetime_str = hour+':'+minute +'  '+ weekday+' ' + month+'.' +day
 		ASCII_datetime = pyfiglet.figlet_format(datetime_str, font='smslant')
 
 		self.datetimewin.config(state='normal')
@@ -303,36 +303,3 @@ class TasKeyUI:
 		self.progresswin.insert(tk.END, '] ' + total_precent + '%')
 
 		self.progresswin.config(state='disabled')
-
-
-## EXECUTABLE ## 
-
-# version = 'v- 00.05.06'
-
-# paths = {
-#    'Main': '/some/junk/goes/here',
-#    'S1': '/some/junk/goes/here',
-#    'Bubs<3': '/some/junk/goes/here',
-#    'Dogs': '/some/junk/goes/here',
-#    'Long Test': '/some/junk/goes/here',
-#    'Anotha One': '/some/junk/went/here'
-# }
-
-# config = {
-# 	'background_color': 'black',
-# 	'header_color': 'orange',
-# 	'prompt_color': 'mediumpurple2',
-# 	'datetime_color': 'deepskyblue',
-# 	'trim_color': 'darkslategray',
-# 	'text_color': 'paleturquoise1',
-# 	'highlight_color': 'mediumpurple2',
-# 	'cursor_color': 'paleturquoise1',
-# 	'progressbar_color': 'slategray3',
-# 	'progress_good_color': 'green',
-# 	'progress_med_color': 'orange',
-# 	'progress_bad_color': 'red',
-# 	'tab_color': 'slategray3',
-# 	'tab_bar_color': 'slategray3'
-# 	}
-
-# TasKeyUI(version, config,  paths)
