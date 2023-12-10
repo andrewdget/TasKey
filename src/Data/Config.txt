@@ -1,3 +1,25 @@
+## WARNING: ##
+'''TasKey will attempt to read and execute all text/code written here, without
+any form of validation. Modify and/or add with caution.'''
+
+## NOTES ##
+'''
+
+'''
+
 config = {
-	
+	'background_color': 'black',
+	'header_color': 'orange',
+	'prompt_color': 'mediumpurple2',
+	'datetime_color': 'deepskyblue',
+	'trim_color': 'darkslategray',
+	'text_color': 'paleturquoise1',
+	'highlight_color': 'mediumpurple2',
+	'cursor_color': 'paleturquoise1',
+	'progressbar_color': 'slategray3',
+	'progress_good_color': 'green',
+	'progress_med_color': 'orange',
+	'progress_bad_color': 'red',
+	'tab_color': 'slategray3',
+	'tab_bar_color': 'slategray3'
 	}

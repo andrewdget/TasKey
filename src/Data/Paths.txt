@@ -1,3 +1,18 @@
+## WARNING: ##
+'''TasKey will attempt to read and execute all text/code written here, without
+any form of validation. Modify and/or add with caution.'''
+
+
+## NOTES ##
+'''
+
+'''
+
 paths = {
-	
+   'Main': '/some/junk/goes/here',
+   'S1': '/some/junk/goes/here',
+   'Bubs<3': '/some/junk/goes/here',
+   'Dogs': '/some/junk/goes/here',
+   'Long Test': '/some/junk/goes/here',
+   'Anotha One': '/some/junk/went/here'
 	}

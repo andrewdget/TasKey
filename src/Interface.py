@@ -44,7 +44,7 @@ class TasKeyUI:
 		self.current_sel = 'aa'
 
 		self.root = tk.Tk()
-		self.root.title('TasKey ' + self.version + ' (Beta)')
+		self.root.title('TasKey ' + self.version)
 		self.root.configure(bg=self.background_color)
 
 		# widgets
@@ -307,32 +307,32 @@ class TasKeyUI:
 
 ## EXECUTABLE ## 
 
-version = 'v- 00.05.06'
+# version = 'v- 00.05.06'
 
-paths = {
-   'Main': '/some/junk/goes/here',
-   'S1': '/some/junk/goes/here',
-   'Bubs<3': '/some/junk/goes/here',
-   'Dogs': '/some/junk/goes/here',
-   'Long Test': '/some/junk/goes/here',
-   'Anotha One': '/some/junk/went/here'
-}
+# paths = {
+#    'Main': '/some/junk/goes/here',
+#    'S1': '/some/junk/goes/here',
+#    'Bubs<3': '/some/junk/goes/here',
+#    'Dogs': '/some/junk/goes/here',
+#    'Long Test': '/some/junk/goes/here',
+#    'Anotha One': '/some/junk/went/here'
+# }
 
-config = {
-	'background_color': 'black',
-	'header_color': 'orange',
-	'prompt_color': 'mediumpurple2',
-	'datetime_color': 'deepskyblue',
-	'trim_color': 'darkslategray',
-	'text_color': 'paleturquoise1',
-	'highlight_color': 'mediumpurple2',
-	'cursor_color': 'paleturquoise1',
-	'progressbar_color': 'slategray3',
-	'progress_good_color': 'green',
-	'progress_med_color': 'orange',
-	'progress_bad_color': 'red',
-	'tab_color': 'slategray3',
-	'tab_bar_color': 'slategray3'
-	}
+# config = {
+# 	'background_color': 'black',
+# 	'header_color': 'orange',
+# 	'prompt_color': 'mediumpurple2',
+# 	'datetime_color': 'deepskyblue',
+# 	'trim_color': 'darkslategray',
+# 	'text_color': 'paleturquoise1',
+# 	'highlight_color': 'mediumpurple2',
+# 	'cursor_color': 'paleturquoise1',
+# 	'progressbar_color': 'slategray3',
+# 	'progress_good_color': 'green',
+# 	'progress_med_color': 'orange',
+# 	'progress_bad_color': 'red',
+# 	'tab_color': 'slategray3',
+# 	'tab_bar_color': 'slategray3'
+# 	}
 
-TasKeyUI(version, config,  paths)
+# TasKeyUI(version, config,  paths)
