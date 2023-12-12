@@ -52,34 +52,44 @@ class TasKeyUI:
 		self.header.config(
 			bg=self.background_color,
 			fg=self.header_color,
+			borderwidth=0,
 			highlightthicknes=hlt,
 			padx=10,
 			height=5,
 			width=30
 			)
 
+
 		self.listwin = tk.Text(self.root)
 		self.listwin.config(
 			bg=self.background_color,
 			fg=self.text_color,
+			borderwidth=0,
+			width=60,
 			highlightbackground=self.trim_color,
 			highlightthicknes=1,
 			state='disabled'
 			)
+
 
 		self.infowin = tk.Text(self.root)
 		self.infowin.config(
 			bg=self.background_color,
 			fg=self.text_color,
+			borderwidth=0,
+			width=0,
 			highlightbackground=self.trim_color,
 			highlightthicknes=1,
 			state='disabled'
 			)
 
+
 		self.commandwin = tk.Text(self.root)
 		self.commandwin.config(
 			bg=self.background_color,
 			fg=self.text_color,
+			borderwidth=0,
+			width=0,
 			highlightcolor=self.trim_color,
 			highlightbackground=self.trim_color,
 			highlightthicknes=1,
@@ -92,10 +102,13 @@ class TasKeyUI:
 			)
 		self.commandwin.tag_config('highlight', foreground=self.prompt_color)
 
+
 		self.tabwin = tk.Text(self.root)
 		self.tabwin.config(
 			bg=self.background_color,
 			fg=self.tab_color,
+			borderwidth=0,
+			width=0,
 			highlightthicknes=hlt,
 			font='Courier',
 			wrap=tk.NONE,
@@ -105,20 +118,26 @@ class TasKeyUI:
 		self.tabwin.tag_config('bar', foreground=self.tab_bar_color)
 		self.tabwin.tag_config('highlight', foreground=self.highlight_color)
 
+
 		self.datetimewin = tk.Text(self.root)
 		self.datetimewin.config(
 			bg=self.background_color,
 			fg=self.datetime_color,
+			borderwidth=0,
+			width=0,
 			highlightthicknes=hlt,
 			state='disabled',
 			padx=5,
 			height=5,
 			)
 
+
 		self.progresswin = tk.Text(self.root)
 		self.progresswin.config(
 			bg=self.background_color,
 			fg=self.progressbar_color,
+			borderwidth=0,
+			width=0,
 			highlightthicknes=hlt,
 			font='Courier',
 			state='disabled',
@@ -129,6 +148,7 @@ class TasKeyUI:
 		self.progresswin.tag_config('good', foreground=self.progress_good_color)
 		self.progresswin.tag_config('med', foreground=self.progress_med_color)	
 		self.progresswin.tag_config('bad', foreground=self.progress_bad_color)
+
 
 		self.root.columnconfigure(0, weight=0)
 		self.root.columnconfigure(1, weight=1)
