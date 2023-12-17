@@ -7,17 +7,114 @@
 ## DEPENDENCIES ## 
 
 import datetime
+from Utils import AlphaIndexer
 
 
 ## DEFINITIONS ##
 
 class TaskDB:
-	def __init__(self, db_name, path):
+	def __init__(self, config, db_name, path, Active=None, Archive=None):
+		self.config = config
 		self.db_name = db_name
-		self.path = path # ?? is this needed ??
+		self.path = path
 		
-		self.Active = []
-		self.Archive = []
+		if Active == None:
+			self.Active = []
+		else:
+			self.Active = Active
+
+		if Archive == None:
+			self.Archive = []
+		else:
+			self.Archive = Archive
+
+
+	def new(self, command_pairs):
+		priorities_LUT = {
+			'-c': 'critical',
+		 	'-h': 'high',
+		 	'-m': 'medium',
+		 	'-l': 'low'
+		 	}
+		flags = list(command_pairs.keys())
+		for flag in flags:
+			attribute = command_pairs[flag]
+			if flag == '-n':
+				name = attribute
+			elif flag == '-f':
+				footnote = attribute
+			elif flag in list(priorities.keys()):
+				priority = priorities[flag]
+			elif flag == '-d':
+				deadline = '-d'
+
+			if 'footnote' not in locals():
+				footnote = None
+			if 'priority' not in locals():
+				priority = None
+			if 'deadline' not in locals():
+				deadline = None
+
+			new = ActiveTask(self.config, name, footnote, priority, deadline)
+			self.Active.append(new)
+
+
+	def edit(self, command_pairs):
+		priorities_LUT = {
+			'-c': 'critical',
+		 	'-h': 'high',
+		 	'-m': 'medium',
+		 	'-l': 'low'
+		 	}
+		flags = list(command_pairs.keys())
+		for flag in flags:
+			attribute = command_pairs[flag]
+			if flag == '-e':
+				index = AlphaIndexer(attribute, reverse=True)
+			elif flag == '-n':
+				self.Active[index].name = attribute
+			elif flag == '-f':
+				self.Active[index].footnote = attribute
+			elif flag in list(priorities.keys()):
+				self.Active[index].priority = priorities[flag]
+			elif flag == '-d':
+				if attribute == None: # allows for elimination of hard deadline
+					self.Active[index].deadline = None
+					self.Active[index].hard_deadline = False
+				else:
+					self.Active[index].deadline = attribute
+					self.Active[index].hard_deadline = True
+
+
+	def complete(self, command_pairs):
+		index = AlphaIndexer(command_pairs['-c'], reverse=True)
+		completed = ArchiveTask(self.config, self.Active[index], 'completed',)
+		self.Archive.append(completed)
+		del self.Active[index]
+
+
+	def delete(self, command_pairs):
+		index = AlphaIndexer(command_pairs['-d'], reverse=True)
+		deleted = ArchiveTask(self.config, self.Active[index], 'deleted',)
+		self.Archive.append(deleted)
+		del self.Active[index]
+
+
+	def restore(self, command_pairs):
+		index = AlphaIndexer(command_pairs['-r'], reverse=True)
+		name = self.Archive[index].name
+		footnote = self.Archive[index].footnote
+		priority = self.Archive[index].priority
+		if self.Archive[index].hard_deadline:
+			deadline = self.Archive[index]
+		else:
+			deadline = None
+		restore = ActiveTask(self.config, name, footnote, priority, deadline)
+		# restore original auto-generated variables
+		restore.created = self.Archive[index].created
+		restore.author = self.Archive[index].author
+		self.Active.append(restore)
+		del self.Archive[index]
 
 
 class ActiveTask:
@@ -33,7 +130,7 @@ class ActiveTask:
 
 	-Generated:
 		hard_deadline - was the date manualy/automaticaly generated
-		created
+		created **located above deadline as is requiured for AutoDeadline()**
 		remaining - days remaining before deadline
 		score - priority score (lower is better)
 		alpha_index - double letter (i.e. "aa") index
@@ -49,15 +146,15 @@ class ActiveTask:
 		else:
 			self.priority = priority
 
+		self.created = self.GetCurrentDate()
 		if deadline == None:
-			self.deadline = AutoDeadline()
+			self.deadline = self.AutoDeadline()
 			self.hard_deadline = False
 		else:
 			self.deadline = self.Str2Date(deadline)
 			self.hard_deadline = True
 
 		self.author = self.config['username']
-		self.created = self.GetCurrentDate()
 		self.remaining = self.RegularWorkDayCounter()
 		self.score = self.ScorePriority()
 		self.alpha_index = None # this will be set later by external routines
@@ -90,7 +187,7 @@ class ActiveTask:
 		if self.priority == 'high':
 			deadline = self.created + datetime.timedelta(weeks=self.config['high_period'])
 		elif self.priority == 'medium':
-			deadline = self.created + datetime.timedelta(weeks=self.config['medium_eriod'])
+			deadline = self.created + datetime.timedelta(weeks=self.config['medium_period'])
 		elif self.priority == 'low':
 			deadline = self.created + datetime.timedelta(weeks=self.config['low_period'])
 		elif self.priority == 'critical':
@@ -138,7 +235,7 @@ class ActiveTask:
 
 	def refresh(self):
 		''' updates deadline (if auto generated), days remaining, and priority
-		score. Used when task is edited. '''
+		score. Used when task is edited or restored. '''
 		if self.hard_deadline:
 			self.deadline = self.Str2Date(self.deadline) # insures deadline in correct format
 		else:
@@ -169,7 +266,7 @@ class ArchiveTask:
 		alpha_index - double letter (i.e. "aa") index
 	'''
 
-	def __init__(self, config, task, reason, modifier):
+	def __init__(self, config, task, reason):
 		self.modifier = config['username']
 
 		self.name = task.name

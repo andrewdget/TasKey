@@ -204,6 +204,10 @@ class TasKeyUI:
 				self.commandwin.delete('1.0', '1.10')
 				self.commandwin.insert('1.0', 'TasKey >> ', 'highlight')
 
+	# def CommandReturn(self, event):
+	# 	input_raw = self.commandwin.get('1.10', tk.END) # includes the erroneus '\n' at end
+	# 	input_stripped = input_raw[0:len(input_raw)-1] # ending '\n' stripped
+		
 
 	def OnResize(self, event):
 		self.PathTabs()
