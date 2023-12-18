@@ -1,6 +1,8 @@
 ## NOTES ##
 '''
-1. implemented temprorary error handling, improve later
+1. -i command has no validation to insure alpha index given is valid
+2. -t command has no validation to insure commanded tab exists
+
 '''
 
 ## DEPENDENCIES ## 
@@ -10,7 +12,7 @@ from Utils import *
 
 ## DEFINITIONS ##
 
-def ComPro(CurrentDB, input):
+def ComPro(CurrentDB, input_str):
 	'''
 	DATABASE COMMANDS
 	-n new task
@@ -26,54 +28,117 @@ def ComPro(CurrentDB, input):
 	-t switch tabs
 	-k kill TasKey
 	'''
-	command_pairs = ComInt(input)
-	if len(command_pairs.keys()) == 0:
-		print('!!ERROR!! - CommandProcessor - line 31')
-	else:
-		leader = list(command_pairs.keys())[0]
-		if leader == '-n':
-			required_pairs = {'-n': 'req'}
-			validation = ComValidation(command_pairs, required_pairs)
-			if validation:
-				CurrentDB.new(command_pairs)
-			else:
-				print('!!ERROR!! - CommandProcessor - line 40')
-
-		elif leader == '-e':
-			required_pairs = {'-e': 'req', '-n/-f/-c/-h/-m/-l/-d': 'opt'}
-			validation = ComValidation(command_pairs, required_pairs)
-			if validation:
-				CurrentDB.edit(command_pairs)
-			else:
-				print('!!ERROR!! - CommandProcessor - line 48')
-
-		elif leader == '-c':
-			required_pairs = {'-c': 'req'}
-			validation = ComValidation(command_pairs, required_pairs)
-			if validation:
-				CurrentDB.complete(command_pairs)
-			else:
-				print('!!ERROR!! - CommandProcessor - line 56')
-
-		elif leader == '-d':
-			required_pairs = {'-d': 'req'}
-			validation = ComValidation(command_pairs, required_pairs)
-			if validation:
-				CurrentDB.delete(command_pairs)
-			else:
-				print('!!ERROR!! - CommandProcessor - line 64')
-
-		elif leader == '-r':
-			required_pairs = {'-r': 'req'}
-			validation = ComValidation(command_pairs, required_pairs)
-			if validation:
-				CurrentDB.restore(command_pairs)
-			else:
-				print('!!ERROR!! - CommandProcessor - line 72')
-
+	if len(input_str) > 0: # bypasses command processor if no input is given
+		command_pairs = ComInt(input_str)
+		if len(command_pairs.keys()) == 0:
+			target = 'msg'
+			command = 'ERROR: no flags given'
 		else:
-			print('!!ERROR!! - CommandProcessor - line 75')
+			leader = list(command_pairs.keys())[0]
+			if leader == '-n':
+				required_pairs = {'-n': 'req'}
+				validation = ComValidation(command_pairs, required_pairs)
+				if validation:
+					CurrentDB.new(command_pairs)
+				else:
+					target = 'msg'
+					command = 'ERROR: new task command missing elements'
 
+			elif leader == '-e':
+				required_pairs = {'-e': 'req', '-n/-f/-c/-h/-m/-l/-d': 'opt'}
+				validation = ComValidation(command_pairs, required_pairs)
+				if validation:
+					CurrentDB.edit(command_pairs)
+				else:
+					target = 'msg'
+					command = 'ERROR: edit task command missing elements'
+
+			elif leader == '-c':
+				required_pairs = {'-c': 'req'}
+				validation = ComValidation(command_pairs, required_pairs)
+				if validation:
+					CurrentDB.complete(command_pairs)
+				else:
+					target = 'msg'
+					command = 'ERROR: complete task command missing index'
+
+			elif leader == '-d':
+				required_pairs = {'-d': 'req'}
+				validation = ComValidation(command_pairs, required_pairs)
+				if validation:
+					CurrentDB.delete(command_pairs)
+				else:
+					target = 'msg'
+					command = 'ERROR: delete task command missing index'
+
+			elif leader == '-r':
+				required_pairs = {'-r': 'req'}
+				validation = ComValidation(command_pairs, required_pairs)
+				if validation:
+					CurrentDB.restore(command_pairs)
+				else:
+					target = 'msg'
+					command = 'ERROR: restore task command missing index'
+
+			elif leader == '-i':
+				required_pairs = {'-i': 'req'}
+				validation = ComValidation(command_pairs, required_pairs)
+				if validation:
+					target = 'sel'
+					command = command_pairs['-i']
+				else:
+					target = 'msg'
+					command = 'ERROR: information command missing index'
+
+			elif leader == '-m':
+				required_pairs = {'-m': None}
+				validation = ComValidation(command_pairs, required_pairs)
+				if validation:
+					target = 'win'
+					command = 'Active'
+				else:
+					target = 'msg'
+					command = 'ERROR: switch to main command provided invalid elements'
+
+			elif leader == '-a':
+				required_pairs = {'-a': None}
+				validation = ComValidation(command_pairs, required_pairs)
+				if validation:
+					target = 'win'
+					command = 'Archive'
+				else:
+					target = 'msg'
+					command = 'ERROR: switch to archive command provided invalid elements'	
+
+			elif leader == '-t':
+				required_pairs = {'-t': 'req'}
+				validation = ComValidation(command_pairs, required_pairs)
+				if validation:
+					target = 'tab'
+					command = command_pairs['-t']
+				else:
+					target = 'msg'
+					command = 'ERROR: switch tab command missing name of tab'
+
+			elif leader == '-k':
+				required_pairs = {'-k': None}
+				validation = ComValidation(command_pairs, required_pairs)
+				if validation:
+					target = 'kill'
+				else:
+					target = 'msg'
+					command = 'ERROR: kill command provided invalid elements'			
+
+			else:
+				target = 'msg'
+				command = 'ERROR: no valid flags given'
+
+	if 'target' not in locals():
+		target = None
+	if 'command' not in locals():
+		command = None
+
+	return target, command
 
 
 ## EXECUTABLE ## 

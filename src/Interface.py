@@ -49,6 +49,7 @@ class TasKeyUI:
 		self.current_win = 'Active'
 		self.current_tab = list(self.paths.keys())[0]
 		self.current_sel = 'aa'
+		self.command_msg = False
 
 		self.root = tk.Tk()
 		self.root.title('TasKey ' + self.version)
@@ -112,6 +113,7 @@ class TasKeyUI:
 			height=3
 			)
 		self.commandwin.tag_config('prompt', foreground=self.prompt_color)
+		self.commandwin.tag_config('highlight', foreground=self.highlight_color)
 
 
 		self.tabwin = tk.Text(self.root)
@@ -217,11 +219,17 @@ class TasKeyUI:
 				self.commandwin.insert('1.0', 'TasKey >> ', 'prompt')
 
 	def CommandReturn(self, event):
-		input_raw = self.commandwin.get('1.10', tk.END) # includes the erroneus '\n' at end
-		input_stripped = input_raw[0:len(input_raw)-1] # ending '\n' stripped
-		command = ComPro(self.CurrentDB, input_stripped)
-		self.commandwin.delete('1.10', tk.END)
-		self.DispRefresh()
+		if self.command_msg == False:
+			input_raw = self.commandwin.get('1.10', tk.END) # includes the erroneus '\n' at end
+			input_stripped = input_raw[0:len(input_raw)-1] # ending '\n' stripped
+			[target, command] = ComPro(self.CurrentDB, input_stripped)
+			self.commandwin.delete('1.10', tk.END)
+			self.UICommandProcessor(target, command)
+		else:
+			self.commandwin.config(state='normal')
+			self.commandwin.delete('1.0', tk.END)
+			self.commandwin.insert('1.0', 'TasKey >> ', 'prompt')
+			self.command_msg = False
 		return 'break'
 
 	def OnResize(self, event):
@@ -429,3 +437,28 @@ class TasKeyUI:
 
 		self.listwin.config(state='disabled')
 		self.infowin.config(state='disabled')
+
+
+	def CommandMsg(self, message):
+		self.command_msg = True
+		self.commandwin.delete('1.0', tk.END)
+		self.commandwin.insert('1.0', message, 'highlight')
+		self.commandwin.insert(tk.END, ' <press enter to continue>', 'prompt')
+		self.commandwin.config(state='disabled')
+
+
+	def UICommandProcessor(self, target, command):
+		if target != None:
+			if target == 'sel':
+				self.current_sel = command
+			elif target == 'win':
+				self.current_win = command
+				self.current_sel == 'aa'
+			elif target == 'tab':
+				self.current_tab = command
+			elif target == 'msg':
+				self.CommandMsg(command)
+			elif target == 'kill':
+				self.root.destroy()
+				return
+		self.DispRefresh()
