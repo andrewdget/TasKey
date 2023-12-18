@@ -55,8 +55,8 @@ class TaskDB:
 			if 'deadline' not in locals():
 				deadline = None
 
-			new = ActiveTask(self.config, name, footnote, priority, deadline)
-			self.Active.append(new)
+		new = ActiveTask(self.config, name, footnote, priority, deadline)
+		self.Active.append(new)
 
 
 	def edit(self, command_pairs):
