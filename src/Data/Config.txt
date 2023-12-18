@@ -30,6 +30,7 @@ config = {
 	'progress_bad_color': 'red',
 	'tab_color': 'slategray3',
 	'tab_bar_color': 'slategray3',
+	'accent_color': 'red3',
 
 
 	## REGULAR WORK DAY SETTINGS ##

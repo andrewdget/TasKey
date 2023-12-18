@@ -2,6 +2,9 @@
 '''
 1. progress bar values are currently hard coded
 2. monitor clock performance, may need to switch to using multiprocessing
+3. condiser making portions of config file that pertain to theme/style seperate
+	to support creation of default/custom themes as well as sharing.
+4. add headers to indicate what is being shown in listwin
 '''
 
 ## DEPENDENCIES ## 
@@ -11,15 +14,18 @@ import tkinter.font as tkf
 import pyfiglet
 import datetime
 
+from CommandProcessor import *
+
 ## DEFINITIONS ##
 
 class TasKeyUI:
-	def __init__(self, version, config, paths):
+	def __init__(self, version, config, temp_db, paths):
 
 		# development setting
 		hlt = 0 # '1' places box around naked frames/text boxes for dev purposes
 
 		self.version = version
+		self.CurrentDB = temp_db
 		self.paths = paths
 
 		# import styles from config
@@ -37,9 +43,10 @@ class TasKeyUI:
 		self.progress_bad_color = config['progress_bad_color']
 		self.tab_color = config['tab_color']
 		self.tab_bar_color = config['tab_bar_color']
+		self.accent_color = config['accent_color']
 
 		# set current state variables
-		self.current_win = 'Tasks'
+		self.current_win = 'Archive'
 		self.current_tab = list(self.paths.keys())[0]
 		self.current_sel = 'aa'
 
@@ -70,6 +77,8 @@ class TasKeyUI:
 			highlightthicknes=1,
 			state='disabled'
 			)
+		self.listwin.tag_config('index', foreground=self.accent_color)
+		self.listwin.tag_config('highlight', foreground=self.highlight_color)
 
 
 		self.infowin = tk.Text(self.root)
@@ -82,6 +91,8 @@ class TasKeyUI:
 			highlightthicknes=1,
 			state='disabled'
 			)
+		self.infowin.tag_config('header', foreground=self.accent_color)
+		self.infowin.tag_config('highlight', foreground=self.highlight_color)
 
 
 		self.commandwin = tk.Text(self.root)
@@ -100,7 +111,7 @@ class TasKeyUI:
 			insertbackground=self.cursor_color,
 			height=3
 			)
-		self.commandwin.tag_config('highlight', foreground=self.prompt_color)
+		self.commandwin.tag_config('prompt', foreground=self.prompt_color)
 
 
 		self.tabwin = tk.Text(self.root)
@@ -171,14 +182,14 @@ class TasKeyUI:
 
 		# set initial conditions
 		self.commandwin.focus_set()
-		self.commandwin.insert('1.0', 'TasKey >> ', 'highlight')
+		self.commandwin.insert('1.0', 'TasKey >> ', 'prompt')
 
 		self.ASCII_name = pyfiglet.figlet_format('TasKey', font='smslant')
 		self.header.insert('1.0', self.ASCII_name)
 		self.header.config(state='disabled')
 
 		self.root.update()
-		self.PathTabs()
+		self.BuildTabs()
 		self.ASCII_Datetime()
 		self.ASCII_ProgressBar()
 
@@ -187,6 +198,7 @@ class TasKeyUI:
 		self.root.bind('<Configure>', self.OnResize)
 		self.commandwin.bind('<FocusOut>', self.FocusReturn)
 		self.commandwin.bind('<KeyRelease>', self.PromptProtect)
+		self.commandwin.bind('<Return>', self.CommandReturn)
 
 		self.root.mainloop()
 
@@ -202,19 +214,22 @@ class TasKeyUI:
 		if int(cursor_line) == 1:
 			if int(cursor_column) < 10:
 				self.commandwin.delete('1.0', '1.10')
-				self.commandwin.insert('1.0', 'TasKey >> ', 'highlight')
+				self.commandwin.insert('1.0', 'TasKey >> ', 'prompt')
 
-	# def CommandReturn(self, event):
-	# 	input_raw = self.commandwin.get('1.10', tk.END) # includes the erroneus '\n' at end
-	# 	input_stripped = input_raw[0:len(input_raw)-1] # ending '\n' stripped
-		
+	def CommandReturn(self, event):
+		input_raw = self.commandwin.get('1.10', tk.END) # includes the erroneus '\n' at end
+		input_stripped = input_raw[0:len(input_raw)-1] # ending '\n' stripped
+		command = ComPro(self.CurrentDB, input_stripped)
+		self.commandwin.delete('1.10', tk.END)
+		self.DispRefresh()
+		return 'break'
 
 	def OnResize(self, event):
-		self.PathTabs()
+		self.BuildTabs()
 		self.ASCII_ProgressBar()
 		
 
-	def PathTabs(self):
+	def BuildTabs(self):
 		self.tabwin.config(state='normal')
 		self.tabwin.delete('1.0', tk.END)
 		self.tabwin.insert('1.0', '\n\n') # creates required lines
@@ -327,3 +342,98 @@ class TasKeyUI:
 		self.progresswin.insert(tk.END, '] ' + total_precent + '%')
 
 		self.progresswin.config(state='disabled')
+
+
+	def DispRefresh(self):
+		# self.current_win = 'Active'
+		# self.current_sel = 'aa'
+		self.BuildTabs()
+		self.CurrentDB.reindex()
+
+		self.listwin.config(state='normal')
+		self.listwin.delete('1.0', tk.END)
+		self.infowin.config(state='normal')
+		self.infowin.delete('1.0', tk.END)
+
+		if self.current_win == 'Active':
+			for task in self.CurrentDB.Active:
+				alpha_index = task.alpha_index
+				if alpha_index == self.current_sel:
+					self.listwin.insert(tk.END, alpha_index, 'highlight')
+					self.listwin.insert(tk.END, ' ' + task.name + '\n')
+
+					self.infowin.insert(tk.END, 'Task Name: ', 'header')
+					self.infowin.insert(tk.END, task.name + '\n')
+					self.infowin.insert(tk.END, 'Footnote: ', 'header')
+					self.infowin.insert(tk.END, str(task.footnote) + '\n')
+					self.infowin.insert(tk.END, 'Priority: ', 'header')
+					self.infowin.insert(tk.END, task.priority + '\n')
+					self.infowin.insert(tk.END, 'Score: ', 'header')
+					self.infowin.insert(tk.END, str(task.score) + '\n')
+
+					self.infowin.insert(tk.END, 'Deadline: ', 'header')
+					if task.hard_deadline:
+						self.infowin.insert(tk.END, str(task.deadline))
+						self.infowin.insert(tk.END, ' (Manual)\n', 'highlight')
+					else:
+						self.infowin.insert(tk.END, str(task.deadline))
+						self.infowin.insert(tk.END, ' (Auto)\n', 'highlight')
+
+					self.infowin.insert(tk.END, 'Working Days Remaining: ', 'header')
+					self.infowin.insert(tk.END, str(task.remaining) + '\n')
+					self.infowin.insert(tk.END, 'Created by: ', 'header')
+					self.infowin.insert(tk.END, task.author + '\n')
+					self.infowin.insert(tk.END, 'Created on: ', 'header')
+					self.infowin.insert(tk.END, str(task.created) + '\n')
+
+				else:
+					self.listwin.insert(tk.END, alpha_index, 'index')
+					self.listwin.insert(tk.END, ' ' + task.name + '\n')
+		elif self.current_win == 'Archive':
+			for task in self.CurrentDB.Archive:
+				alpha_index = task.alpha_index
+				if alpha_index == self.current_sel:
+					self.listwin.insert(tk.END, alpha_index, 'highlight')
+					self.listwin.insert(tk.END, ' ' + task.name + '\n')
+
+					self.infowin.insert(tk.END, 'Task Name: ', 'header')
+					self.infowin.insert(tk.END, task.name + '\n')
+					self.infowin.insert(tk.END, 'Footnote: ', 'header')
+					self.infowin.insert(tk.END, str(task.footnote) + '\n')
+					self.infowin.insert(tk.END, 'Priority: ', 'header')
+					self.infowin.insert(tk.END, task.priority + '\n')
+					
+					self.infowin.insert(tk.END, 'Deadline: ', 'header')
+					if task.hard_deadline:
+						self.infowin.insert(tk.END, str(task.deadline))
+						self.infowin.insert(tk.END, ' (Manual)\n', 'highlight')
+					else:
+						self.infowin.insert(tk.END, str(task.deadline))
+						self.infowin.insert(tk.END, ' (Auto)\n', 'highlight')
+
+					self.infowin.insert(tk.END, 'Created by: ', 'header')
+					self.infowin.insert(tk.END, task.author + '\n')
+					self.infowin.insert(tk.END, 'Created on: ', 'header')
+					self.infowin.insert(tk.END, str(task.created) + '\n')
+					self.infowin.insert(tk.END, 'Modified by: ', 'header')
+					self.infowin.insert(tk.END, task.modifier + '\n')
+					self.infowin.insert(tk.END, 'Modified on: ', 'header')
+					self.infowin.insert(tk.END, str(task.occurred) + '\n')
+					self.infowin.insert(tk.END, 'Reason: ', 'header')
+					self.infowin.insert(tk.END, task.reason + '\n')
+
+
+				else:
+					self.listwin.insert(tk.END, alpha_index, 'index')
+					self.listwin.insert(tk.END, ' ' + task.name + '\n')
+
+
+
+		self.listwin.config(state='disabled')
+		self.infowin.config(state='disabled')
+
+
+
+
+
+

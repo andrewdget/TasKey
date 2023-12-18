@@ -30,7 +30,7 @@ class TaskDB:
 
 
 	def new(self, command_pairs):
-		priorities_LUT = {
+		priorities = {
 			'-c': 'critical',
 		 	'-h': 'high',
 		 	'-m': 'medium',
@@ -60,7 +60,7 @@ class TaskDB:
 
 
 	def edit(self, command_pairs):
-		priorities_LUT = {
+		priorities = {
 			'-c': 'critical',
 		 	'-h': 'high',
 		 	'-m': 'medium',
@@ -115,6 +115,16 @@ class TaskDB:
 		restore.author = self.Archive[index].author
 		self.Active.append(restore)
 		del self.Archive[index]
+
+	def reindex(self):
+		self.Active.sort(key=lambda x: x.created) # done first to insure tasks w/ same score, oldest appear first
+		self.Active.sort(key=lambda x: x.score)
+		for i in range(len(self.Active)):
+			self.Active[i].alpha_index = AlphaIndexer(i)
+
+		self.Archive.sort(key=lambda x: x.occurred, reverse=True)
+		for i in range(len(self.Archive)):
+			self.Archive[i].alpha_index = AlphaIndexer(i)
 
 
 class ActiveTask:
