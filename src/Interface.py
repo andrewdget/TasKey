@@ -46,7 +46,7 @@ class TasKeyUI:
 		self.accent_color = config['accent_color']
 
 		# set current state variables
-		self.current_win = 'Archive'
+		self.current_win = 'Active'
 		self.current_tab = list(self.paths.keys())[0]
 		self.current_sel = 'aa'
 
@@ -389,6 +389,7 @@ class TasKeyUI:
 				else:
 					self.listwin.insert(tk.END, alpha_index, 'index')
 					self.listwin.insert(tk.END, ' ' + task.name + '\n')
+		
 		elif self.current_win == 'Archive':
 			for task in self.CurrentDB.Archive:
 				alpha_index = task.alpha_index
@@ -422,18 +423,9 @@ class TasKeyUI:
 					self.infowin.insert(tk.END, 'Reason: ', 'header')
 					self.infowin.insert(tk.END, task.reason + '\n')
 
-
 				else:
 					self.listwin.insert(tk.END, alpha_index, 'index')
 					self.listwin.insert(tk.END, ' ' + task.name + '\n')
 
-
-
 		self.listwin.config(state='disabled')
 		self.infowin.config(state='disabled')
-
-
-
-
-
-
