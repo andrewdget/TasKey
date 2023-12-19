@@ -19,14 +19,13 @@ from CommandProcessor import *
 ## DEFINITIONS ##
 
 class TasKeyUI:
-	def __init__(self, version, config, temp_db, paths):
+	def __init__(self, version, config, DBroster):
 
 		# development setting
 		hlt = 0 # '1' places box around naked frames/text boxes for dev purposes
 
 		self.version = version
-		self.CurrentDB = temp_db
-		self.paths = paths
+		self.DBroster = DBroster
 
 		# import styles from config
 		self.background_color = config['background_color']
@@ -46,9 +45,10 @@ class TasKeyUI:
 		self.accent_color = config['accent_color']
 
 		# set current state variables
+		
 		self.current_win = 'Active'
-		self.current_tab = list(self.paths.keys())[0]
 		self.current_sel = 'aa'
+		self.current_tab = list(self.DBroster.keys())[0]
 		self.command_msg = False
 
 		self.root = tk.Tk()
@@ -194,6 +194,7 @@ class TasKeyUI:
 		self.BuildTabs()
 		self.ASCII_Datetime()
 		self.ASCII_ProgressBar()
+		self.DispRefresh()
 
 
 		# bindings
@@ -222,7 +223,7 @@ class TasKeyUI:
 		if self.command_msg == False:
 			input_raw = self.commandwin.get('1.10', tk.END) # includes the erroneus '\n' at end
 			input_stripped = input_raw[0:len(input_raw)-1] # ending '\n' stripped
-			[target, command] = ComPro(self.CurrentDB, input_stripped)
+			[target, command] = ComPro(self.DBroster[self.current_tab], input_stripped)
 			self.commandwin.delete('1.10', tk.END)
 			self.UICommandProcessor(target, command)
 		else:
@@ -241,12 +242,12 @@ class TasKeyUI:
 		self.tabwin.config(state='normal')
 		self.tabwin.delete('1.0', tk.END)
 		self.tabwin.insert('1.0', '\n\n') # creates required lines
-		path_names = list(self.paths.keys())
-		for name in path_names:
-			nochars = len(name)
+		tabs = list(self.DBroster.keys())
+		for tab in tabs:
+			nochars = len(tab)
 			line1 = ' ' + '_'*nochars + ' '
-			line2 = '/' + name + '\\'
-			if name == self.current_tab:
+			line2 = '/' + tab + '\\'
+			if tab == self.current_tab:
 				self.tabwin.insert('1.end', line1, 'highlight')
 				self.tabwin.insert('2.end', line2, 'highlight')
 			else:
@@ -356,7 +357,7 @@ class TasKeyUI:
 		# self.current_win = 'Active'
 		# self.current_sel = 'aa'
 		self.BuildTabs()
-		self.CurrentDB.reindex()
+		self.DBroster[self.current_tab].reindex()
 
 		self.listwin.config(state='normal')
 		self.listwin.delete('1.0', tk.END)
@@ -364,7 +365,7 @@ class TasKeyUI:
 		self.infowin.delete('1.0', tk.END)
 
 		if self.current_win == 'Active':
-			for task in self.CurrentDB.Active:
+			for task in self.DBroster[self.current_tab].Active:
 				alpha_index = task.alpha_index
 				if alpha_index == self.current_sel:
 					self.listwin.insert(tk.END, alpha_index, 'highlight')
@@ -399,7 +400,7 @@ class TasKeyUI:
 					self.listwin.insert(tk.END, ' ' + task.name + '\n')
 		
 		elif self.current_win == 'Archive':
-			for task in self.CurrentDB.Archive:
+			for task in self.DBroster[self.current_tab].Archive:
 				alpha_index = task.alpha_index
 				if alpha_index == self.current_sel:
 					self.listwin.insert(tk.END, alpha_index, 'highlight')
@@ -459,6 +460,6 @@ class TasKeyUI:
 			elif target == 'msg':
 				self.CommandMsg(command)
 			elif target == 'kill':
-				self.root.destroy()
-				return
+				self.root.destroy()				
+				return self.DBroster
 		self.DispRefresh()

@@ -8,11 +8,6 @@ any form of validation. Modify and/or add with caution.'''
 
 '''
 
-paths = {
-   'Main': '/some/junk/goes/here',
-   'S1': '/some/junk/goes/here',
-   'Bubs<3': '/some/junk/goes/here',
-   'Dogs': '/some/junk/goes/here',
-   'Long Test': '/some/junk/goes/here',
-   'Anotha One': '/some/junk/went/here'
+path_roster = {
+   'Main': './Data/Savestates',
 	}

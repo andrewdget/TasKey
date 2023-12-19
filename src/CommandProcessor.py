@@ -12,7 +12,7 @@ from Utils import *
 
 ## DEFINITIONS ##
 
-def ComPro(CurrentDB, input_str):
+def ComPro(DB, input_str):
 	'''
 	DATABASE COMMANDS
 	-n new task
@@ -39,7 +39,7 @@ def ComPro(CurrentDB, input_str):
 				required_pairs = {'-n': 'req'}
 				validation = ComValidation(command_pairs, required_pairs)
 				if validation:
-					CurrentDB.new(command_pairs)
+					DB.new(command_pairs)
 				else:
 					target = 'msg'
 					command = 'ERROR: new task command missing elements'
@@ -48,7 +48,7 @@ def ComPro(CurrentDB, input_str):
 				required_pairs = {'-e': 'req', '-n/-f/-c/-h/-m/-l/-d': 'opt'}
 				validation = ComValidation(command_pairs, required_pairs)
 				if validation:
-					CurrentDB.edit(command_pairs)
+					DB.edit(command_pairs)
 				else:
 					target = 'msg'
 					command = 'ERROR: edit task command missing elements'
@@ -57,7 +57,7 @@ def ComPro(CurrentDB, input_str):
 				required_pairs = {'-c': 'req'}
 				validation = ComValidation(command_pairs, required_pairs)
 				if validation:
-					CurrentDB.complete(command_pairs)
+					DB.complete(command_pairs)
 				else:
 					target = 'msg'
 					command = 'ERROR: complete task command missing index'
@@ -66,7 +66,7 @@ def ComPro(CurrentDB, input_str):
 				required_pairs = {'-d': 'req'}
 				validation = ComValidation(command_pairs, required_pairs)
 				if validation:
-					CurrentDB.delete(command_pairs)
+					DB.delete(command_pairs)
 				else:
 					target = 'msg'
 					command = 'ERROR: delete task command missing index'
@@ -75,7 +75,7 @@ def ComPro(CurrentDB, input_str):
 				required_pairs = {'-r': 'req'}
 				validation = ComValidation(command_pairs, required_pairs)
 				if validation:
-					CurrentDB.restore(command_pairs)
+					DB.restore(command_pairs)
 				else:
 					target = 'msg'
 					command = 'ERROR: restore task command missing index'

@@ -46,7 +46,7 @@ class TaskDB:
 			elif flag in list(priorities.keys()):
 				priority = priorities[flag]
 			elif flag == '-d':
-				deadline = '-d'
+				deadline = attribute
 
 			if 'footnote' not in locals():
 				footnote = None

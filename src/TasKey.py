@@ -6,11 +6,12 @@
 ## DEPENDENCIES ## 
 
 from Interface import *
+from FileManagement import *
 from DataStructure import TaskDB
 
 ## DEFINITIONS ##
 
-
+ 
 ## EXECUTABLE ## 
 
 version = 'v- 00.00.00 (Beta)'
@@ -18,6 +19,9 @@ version = 'v- 00.00.00 (Beta)'
 exec(open('./Data/Paths.txt').read())
 exec(open('./Data/Config.txt').read())
 
-temp_db = TaskDB(config, 'temp_db', './dummy/path')
+DBroster = BatchLoadDB(config, path_roster)
 
-TasKeyUI(version, config, temp_db, paths)
+UI = TasKeyUI(version, config, DBroster)
+
+DBroster = UI.DBroster
+BatchSafeSaveDB(DBroster)
