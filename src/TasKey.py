@@ -14,7 +14,7 @@ from DataStructure import TaskDB
  
 ## EXECUTABLE ## 
 
-version = 'v- 00.00.00 (Beta)'
+version = 'v- 00.00.00 (Alpha)'
 
 exec(open('./Data/Paths.txt').read())
 exec(open('./Data/Config.txt').read())
