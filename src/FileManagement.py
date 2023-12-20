@@ -1,12 +1,6 @@
 ## NOTES ##
 '''
-paths = {DBname: DBpath}
-
-load paths
-find latest file w/ the given name @ path
-append to DBroster dict
-
-UI can then load DB by name from roster
+1. need to add feature that eliminates any bad (temp) saves
 '''
 
 ## DEPENDENCIES ## 
@@ -28,15 +22,32 @@ def GetFiles(name):
 		time = file.replace(header, '').replace('-','.').replace('.txt', '')
 		times.append(float(time))
 	times.sort(reverse=True)
-
 	files = []
 	for time in times:
 		time = str(time).replace('.', '-')
 		for file in files_unsorted:
 			if time in file:
 				files.append(file)
-	
 	return files
+
+def Prune(name, path, del_all=False):
+	rootdir = os.getcwd()
+	os.chdir(path)
+	files = GetFiles(name)
+	for i in range(len(files)):
+		if del_all:
+			os.remove(files[i])
+		else:
+			if i != 0:
+				os.remove(files[i])
+	os.chdir(rootdir)
+
+
+def BatchPrune(path_roster, del_all=False):
+	names = list(path_roster.keys())
+	for name in names:
+		path = path_roster[name]
+		Prune(name, path, del_all)
 
 
 def LoadDB(config, name, path):
@@ -113,5 +124,23 @@ def BatchSafeSaveDB(DBroster):
 		if state == False:
 			print('!! ERROR OCCURED DURING ATTEMPT TO SAVESTATE !!')
 
+def SavestateReset():
+	rootdir = os.getcwd()
+	os.chdir('./Data/Savestates')
+	files = glob.glob('TKsavestate_*.txt')
+	for file in files:
+		os.remove(file)
+	os.chdir(rootdir)
+
+	exec(open('./Data/Paths.txt').read())
+	exec(open('./Data/Config.txt').read())
+	
+	path_roster_loc = locals()['path_roster']
+	config_loc = locals()['config']
+
+	DBroster = BatchLoadDB(config_loc, path_roster_loc)
+	BatchSafeSaveDB(DBroster)
+
 
 ## EXECUTABLE ##
+

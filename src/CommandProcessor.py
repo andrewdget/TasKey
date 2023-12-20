@@ -120,6 +120,15 @@ def ComPro(DB, input_str):
 					target = 'msg'
 					command = 'ERROR: switch tab command missing name of tab'
 
+			elif leader == '-p':
+				required_pairs = {'-p': None}
+				validation = ComValidation(command_pairs, required_pairs)
+				if validation:
+					target = 'prune'
+				else:
+					target = 'msg'
+					command = 'ERROR: prune command provided invalid elements'
+
 			elif leader == '-k':
 				required_pairs = {'-k': None}
 				validation = ComValidation(command_pairs, required_pairs)

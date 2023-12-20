@@ -15,6 +15,7 @@ import pyfiglet
 import datetime
 
 from CommandProcessor import *
+from FileManagement import BatchPrune
 
 ## DEFINITIONS ##
 
@@ -459,7 +460,20 @@ class TasKeyUI:
 				self.current_tab = command
 			elif target == 'msg':
 				self.CommandMsg(command)
+			elif target == 'prune':
+				path_roster = self.GetPaths()
+				BatchPrune(path_roster, del_all=False)
 			elif target == 'kill':
 				self.root.destroy()				
 				return self.DBroster
 		self.DispRefresh()
+
+
+	def GetPaths(self):
+		names = list(self.DBroster.keys())
+		path_roster = {}
+		for name in names:
+			path = self.DBroster[name].path
+			path_roster[name] = path
+		return path_roster
+
