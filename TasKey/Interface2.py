@@ -1,6 +1,6 @@
 ## NOTES ##
 '''
-1. ASCII_Datetime function needs to be improved
+1. Consider improving the ASCII_ProgressBar funciton
 '''
 
 ## DEPENDENCIES ## 
@@ -9,6 +9,7 @@ import tkinter as tk
 import tkinter.font as tkf
 import pyfiglet
 import datetime
+import time
 
 from FileManagement import *
 
@@ -19,35 +20,35 @@ class TasKeyUI:
 
 		self.DBroster = DBroster
 
-		self.background_color = 'black'
-		self.header_color = 'orange'
-		self.datetime_color = 'deepskyblue'
-		self.progressbar_color = 'slategray3'
-		self.progressbar_good_color = 'green'
-		self.progressbar_med_color = 'orange'
-		self.progressbar_bad_color = 'red'
-		self.tab_color = 'white'
-		self.tab_bar_color = 'slategray3'
-		self.border_color = 'dark olive green'
-		self.accent_color = 'seagreen1'
-		self.highlight_color = 'red3'
-		self.text_color = 'paleturquoise1'
-		self.subtext_color = 'darkslategray'
-		self.cursor_color = 'red3'
-		self.prompt_color = 'red3'
+
+		# unpack color settings
+		background_color = 'black'
+		header_color = 'orange'
+		datetime_color = 'deepskyblue'
+		progressbar_color = 'slategray3'
+		progressbar_good_color = 'green'
+		progressbar_med_color = 'orange'
+		progressbar_bad_color = 'red'
+		tab_color = 'slategray3'
+		border_color = 'darkslategray'
+		accent_color = 'seagreen1'
+		highlight_color = 'red3'
+		text_color = 'paleturquoise1'
+		subtext_color = 'darkslategray'
+		cursor_color = 'red3'
+		prompt_color = 'red3'
 
 
-
-
-
+		# UI state variables
 		self.current_win = 'Active'
 		self.current_sel = 'aa'
 		self.current_tab = list(self.DBroster.keys())[0]
 		self.command_msg = False
 
+
 		self.root = tk.Tk()
 		self.root.title('TasKey ' + version)
-		self.root.configure(bg=self.background_color)
+		self.root.configure(bg=background_color)
 
 		self.root.columnconfigure(0, weight=0)
 		self.root.columnconfigure(1, weight=1)
@@ -58,43 +59,74 @@ class TasKeyUI:
 		self.root.rowconfigure(3, weight=1)
 		self.root.rowconfigure(4, weight=0)
 
+
 		self.headerwin = tk.Text(self.root)
 		self.headerwin.insert('1.0', '\n' + pyfiglet.figlet_format('TasKey',
 			font = 'smslant'))
-		self.headerwin.config(bg=self.background_color, fg=self.header_color,
+		self.headerwin.delete('7.0', tk.END)
+		self.headerwin.config(bg=background_color, fg=header_color,
 			height=6, width=29, borderwidth=0, highlightthickness=0,
 			state='disabled')
-		self.headerwin.grid(row=0, column=0, rowspan=2, padx=5, sticky='nsew')
+		self.headerwin.grid(row=0, column=0, rowspan=2, padx=10, sticky='nsew')
 		
 
-		self.datetimewin = tk.Text(self.root)
-		self.datetimewin.config(bg=self.background_color,
-			fg = self.datetime_color, borderwidth=0, height=4, width=70,
-			highlightthickness=0,state='disabled')
-		self.datetimewin.grid(row=0, column=2, sticky='nsew')
+
+		self.datetimeframe = tk.Frame(self.root)
+		self.datetimeframe.config(
+			borderwidth=0, highlightthickness=0)
+		self.datetimeframe.grid(row=0, column=2, sticky='nsew')
+
+		self.datetimeframe.columnconfigure(0, weight=0)
+		self.datetimeframe.columnconfigure(1, weight=0)
+		self.datetimeframe.columnconfigure(2, weight=0)
+		self.datetimeframe.rowconfigure(0, weight=0)
+
+
+		self.timewin = tk.Text(self.datetimeframe)
+		self.timewin.config(bg=background_color, fg=datetime_color,
+			borderwidth=0, height=4, width=25, highlightthickness=0,
+			state='disabled')
+		self.timewin.tag_config('center', justify=tk.CENTER)
+		self.timewin.grid(row=0, column=0, sticky='nsew')
+		
+
+		self.weekdaywin = tk.Text(self.datetimeframe)
+		self.weekdaywin.config(bg=background_color, fg=datetime_color,
+			borderwidth=0, height=4, width=20, highlightthickness=0,
+			state='disabled')
+		self.weekdaywin.tag_config('center', justify=tk.CENTER)
+		self.weekdaywin.grid(row=0, column=1, sticky='nsew')
+
+
+		self.datewin = tk.Text(self.datetimeframe)
+		self.datewin.config(bg=background_color, fg=datetime_color,
+			borderwidth=0, height=4, width=25, highlightthickness=0,
+			state='disabled')
+		self.datewin.tag_config('center', justify=tk.CENTER)
+		self.datewin.grid(row=0, column=2, sticky='nsew')
+
 
 		self.probarwin = tk.Text(self.root)
-		self.probarwin.config(bg=self.background_color,
-			fg = self.progressbar_color, borderwidth=0, height=2, width=70,
+		self.probarwin.config(bg=background_color,
+			fg = progressbar_color, borderwidth=0, height=2, width=0,
 			highlightthickness=0, font='Courier', state='disabled')
-		self.probarwin.tag_config('good', foreground=self.progressbar_good_color)
-		self.probarwin.tag_config('med', foreground=self.progressbar_med_color)
-		self.probarwin.tag_config('bad', foreground=self.progressbar_bad_color)
+		self.probarwin.tag_config('good', foreground=progressbar_good_color)
+		self.probarwin.tag_config('med', foreground=progressbar_med_color)
+		self.probarwin.tag_config('bad', foreground=progressbar_bad_color)
 		self.probarwin.grid(row=1, column=2, sticky='nsew')
 
 
 		self.tabwin = tk.Text(self.root)
-		self.tabwin.config(bg=self.background_color, fg = self.tab_bar_color,
-			borderwidth=0, height=3, width=70, highlightthickness=0,
+		self.tabwin.config(bg=background_color, fg = tab_color,
+			borderwidth=0, height=2, width=70, highlightthickness=0,
 			font='Courier', state='disabled')
-		self.tabwin.tag_config('tab', foreground=self.tab_color)
-		self.tabwin.tag_config('highlight', foreground=self.highlight_color)
+		self.tabwin.tag_config('highlight', foreground=highlight_color)
 		self.tabwin.grid(row=2, column=0, columnspan=3, padx=5, sticky='nsew')
 
 
 		self.listframe = tk.Frame(self.root)
-		self.listframe.config(borderwidth=0, highlightthickness=2,
-			highlightbackground=self.border_color)
+		self.listframe.config(borderwidth=0, highlightthickness=1,
+			highlightbackground=border_color)
 		self.listframe.grid(row=3, column=0, columnspan=3, padx=5, sticky='nsew')
 
 		self.listframe.columnconfigure(0, weight=0)
@@ -102,73 +134,83 @@ class TasKeyUI:
 		self.listframe.columnconfigure(2, weight=0)
 		self.listframe.rowconfigure(0, weight=1)
 
+
 		self.alphaindexwin = tk.Text(self.listframe)
-		self.alphaindexwin.config(bg=self.background_color,
-			fg=self.accent_color, height=30, width=2, borderwidth=0,
+		self.alphaindexwin.config(bg=background_color,
+			fg=accent_color, height=30, width=2, borderwidth=0,
 			highlightthickness=0, font='Courier', state='disabled')
-		self.alphaindexwin.tag_config('highlight', foreground=self.highlight_color)
+		self.alphaindexwin.tag_config('highlight', foreground=highlight_color)
 		self.alphaindexwin.grid(row=0, column=0, sticky='nsew')
 
+
 		self.listwin = tk.Text(self.listframe)
-		self.listwin.config(bg=self.background_color, fg=self.text_color,
+		self.listwin.config(bg=background_color, fg=text_color,
 			height=30, width=100, borderwidth=0, highlightthickness=0,
 			font='Courier', wrap=tk.WORD, state='disabled')
 		self.listwin.grid(row=0, column=1, sticky='nsew')
 
+
 		self.deadlinewin = tk.Text(self.listframe)
-		self.deadlinewin.config(bg=self.background_color, fg=self.subtext_color,
+		self.deadlinewin.config(bg=background_color, fg=subtext_color,
 			height=30, width=20, borderwidth=0, highlightthickness=0,
 			font='Courier', state='disabled')
 		self.deadlinewin.grid(row=0, column=2, sticky='nsew')
 		
+
 		self.comwin = tk.Text(self.root)
-		self.comwin.config(bg=self.background_color, fg=self.text_color,
-			height=3, width=109, borderwidth=0, highlightthickness=2,
-			highlightbackground=self.border_color, font='Courier', wrap=tk.WORD,
-			insertofftime=300, insertwidth=6,
-			insertbackground=self.cursor_color)
-		self.comwin.tag_config('prompt', foreground=self.prompt_color)
+		self.comwin.config(bg=background_color, fg=text_color,
+			height=3, width=109, borderwidth=0, highlightthickness=1,
+			highlightbackground=border_color, highlightcolor=border_color,
+			font='Courier', wrap=tk.WORD, insertofftime=300, insertwidth=6,
+			insertbackground=cursor_color)
+		self.comwin.tag_config('prompt', foreground=prompt_color)
 		self.comwin.grid(row=4, column=0, columnspan=3, padx=5, pady=5, sticky='nsew')
+
 
 		self.root.update()
 		self.ASCII_Datetime()
 		self.ASCII_ProgressBar()
 		self.BuildTabs()
+		self.FocusReturn()
+		self.PromptProtect()
+
 
 		self.root.bind('<Configure>', self.OnResize)
-
+		self.comwin.bind('<FocusOut>', self.FocusReturn)
+		self.comwin.bind('<KeyRelease>', self.PromptProtect)
 
 		self.root.mainloop()
 
-	
-	def OnResize(self, event):
-		self.BuildTabs()
-		self.ASCII_ProgressBar()
-
 
 	def ASCII_Datetime(self):
-		current = datetime.datetime.now()
-
-		hour = str(current.hour)
-		if len(hour) == 1:
-			hour = '0' + hour
-		minute = str(current.minute)
-		if len(minute) == 1:
-			minute = '0' + minute
-
+		ct = datetime.datetime.now()
+		hour = '{0:02.0f}'.format(ct.hour)
+		minute = '{0:02.0f}'.format(ct.minute)
 		weekdays = ['Mon', 'Tus', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
-		weekday = weekdays[current.weekday()]
-		day = str(current.day)
-		month = str(current.month)
-		year = str(current.year)
+		weekday = weekdays[ct.weekday()]
+		day = '{0:02.0f}'.format(ct.day)
+		month = '{0:02.0f}'.format(ct.month)
 
-		datetime_str = hour+':'+minute +'  '+ weekday+' ' + month+'. ' +day
-		ASCII_datetime = pyfiglet.figlet_format(datetime_str, font='smslant')
+		self.timewin.config(state='normal')
+		self.timewin.delete('1.0', tk.END)
+		ASCII_time = pyfiglet.figlet_format(hour + ':' + minute, font='smslant')
+		self.timewin.insert('1.0', ASCII_time, 'center')
+		self.timewin.delete('5.0', tk.END)
+		self.timewin.config(state='disabled')
+		
+		self.weekdaywin.config(state='normal')
+		self.weekdaywin.delete('1.0', tk.END)
+		ASCII_weekday = pyfiglet.figlet_format(weekday, font='smslant')
+		self.weekdaywin.insert('1.0', ASCII_weekday, 'center')
+		self.weekdaywin.delete('5.0', tk.END)
+		self.weekdaywin.config(state='disabled')
 
-		self.datetimewin.config(state='normal')
-		self.datetimewin.delete('1.0', tk.END)
-		self.datetimewin.insert('1.0', ASCII_datetime)
-		self.datetimewin.config(state='disabled')
+		self.datewin.config(state='normal')
+		self.datewin.delete('1.0', tk.END)
+		ASCII_date = pyfiglet.figlet_format(month + '. ' + day, font='smslant')
+		self.datewin.insert('1.0', ASCII_date, 'center')
+		self.datewin.delete('5.0', tk.END)
+		self.datewin.config(state='disabled')
 
 		self.root.after(1000, self.ASCII_Datetime)
 
@@ -218,37 +260,45 @@ class TasKeyUI:
 		BarColor(weekly_complete, weekly, barchar_length, 0.25, 0.5)
 		self.probarwin.insert(tk.END, '] ' + weekly_precent + '%' + '\n')
 
+		self.probarwin.delete('3.0', tk.END)
 		self.probarwin.config(state='disabled')
 		
 
 	def BuildTabs(self):
 		self.tabwin.config(state='normal')
 		self.tabwin.delete('1.0', tk.END)
-		self.tabwin.insert('1.0', '\n\n') # creates required lines
+		self.tabwin.insert('1.0', '\n\n')
 		tabs = list(self.DBroster.keys())
 		for tab in tabs:
-			nochars = len(tab)
-			line1 = ' ' + '_'*nochars + ' '
+			line1 = ' ' + '_'*len(tab) + ' '
 			line2 = '/' + tab + '\\'
 			if tab == self.current_tab:
 				self.tabwin.insert('1.end', line1, 'highlight')
 				self.tabwin.insert('2.end', line2, 'highlight')
 			else:
-				self.tabwin.insert('1.end', line1, 'tab')
-				self.tabwin.insert('2.end', line2, 'tab')
-
-		[x,y,w,h] = self.root.grid_bbox(0, 2, 2, 2)
-		charwidth = tkf.Font(font='Courier').measure('/')
-		maxchars = int(w/charwidth - 1)
-		tab_len = len(self.tabwin.get('2.0', '2.end'))
-
-		# insures backslashes are at least as long as tabs, even when wrapped
-		if tab_len > maxchars:
-			self.tabwin.insert('3.0', '\\'*(tab_len + 1))
-		else:
-			self.tabwin.insert('3.0', '\\'*maxchars)
-
+				self.tabwin.insert('1.end', line1)
+				self.tabwin.insert('2.end', line2)
+		self.tabwin.delete('3.0', tk.END)
 		self.tabwin.config(state='disabled')
+
+
+	def FocusReturn(self,event=None):
+		self.comwin.focus_set()
+
+
+	def PromptProtect(self, event=None):
+		cursor_position = self.comwin.index(tk.INSERT)
+		[cursor_line, cursor_column] = cursor_position.split('.')
+		if int(cursor_line) == 1:
+			if int(cursor_column) < 10:
+				self.comwin.delete('1.0', '1.10')
+				self.comwin.insert('1.0', 'TasKey >> ', 'prompt')
+
+
+	def OnResize(self, event):
+		self.BuildTabs()
+		self.ASCII_ProgressBar()
+
 
 ## EXECUTABLE ## 
 
@@ -258,3 +308,7 @@ exec(open('./Data/Config.txt').read())
 DBroster = BatchLoadDB(config, path_roster)
 
 TasKeyUI('v- 0.00.00 (Alpha)', None, DBroster)
+
+
+
+
