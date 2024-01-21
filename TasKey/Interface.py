@@ -166,6 +166,7 @@ class TasKeyUI:
 
 	def DispRefresh(self):
 		self.BuildTabs()
+		self.DBroster[self.current_tab].refresh()
 		self.DBroster[self.current_tab].reindex()
 
 		self.listwin.config(state='normal')
@@ -230,7 +231,7 @@ class TasKeyUI:
 							'width': w,
 							'charwidth': charwidth
 							}
-					self.AddBranch('Footnote: ' + task.footnote, config)
+					self.AddBranch('Footnote: ' + str(task.footnote), config)
 					self.listwin.insert(tk.END, u'      \u2502\n', 'subtext')
 					config = {
 						'L1': u'      \u251c\u2500\u2500 ',

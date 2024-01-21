@@ -116,6 +116,12 @@ class TaskDB:
 		self.Active.append(restore)
 		del self.Archive[index]
 
+
+	def refresh(self):
+		for i in range(len(self.Active)):
+			self.Active[i].refresh()
+
+
 	def reindex(self):
 		self.Active.sort(key=lambda x: x.created) # done first to insure tasks w/ same score, oldest appear first
 		self.Active.sort(key=lambda x: x.score)
