@@ -18,20 +18,20 @@ config = {
 
 	'background_color': 'black',
 	'header_color': 'orange',
-	'prompt_color': 'mediumpurple2',
 	'datetime_color': 'deepskyblue',
-	'trim_color': 'darkslategray',
-	'text_color': 'paleturquoise1',
-	'highlight_color': 'red3',
-	'cursor_color': 'paleturquoise1',
 	'progressbar_color': 'slategray3',
-	'progress_good_color': 'green',
-	'progress_med_color': 'orange',
-	'progress_bad_color': 'red',
+	'progressbar_good_color': 'green',
+	'progressbar_med_color': 'orange',
+	'progressbar_bad_color': 'red',
 	'tab_color': 'slategray3',
-	'tab_bar_color': 'slategray3',
+	'border_color': 'darkslategray',
 	'accent_color': 'seagreen1',
-
+	'highlight_color': 'red3',
+	'text_color': 'paleturquoise1',
+	'subtext_color': 'darkslategray',
+	'cursor_color': 'red3',
+	'prompt_color': 'red3',
+	'view_status_color': 'mediumpurple2',
 
 	## REGULAR WORK DAY SETTINGS ##
 	# "True" indicates the associated weeday is a regular work day.

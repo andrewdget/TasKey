@@ -1,10 +1,6 @@
 ## NOTES ##
 '''
-1. progress bar values are currently hard coded
-2. monitor clock performance, may need to switch to using multiprocessing
-3. condiser making portions of config file that pertain to theme/style seperate
-	to support creation of default/custom themes as well as sharing.
-4. add headers to indicate what is being shown in listwin
+1. Consider improving the ASCII_ProgressBar funciton
 '''
 
 ## DEPENDENCIES ## 
@@ -13,6 +9,7 @@ import tkinter as tk
 import tkinter.font as tkf
 import pyfiglet
 import datetime
+import math
 
 from CommandProcessor import *
 from FileManagement import BatchPrune
@@ -22,285 +19,443 @@ from FileManagement import BatchPrune
 class TasKeyUI:
 	def __init__(self, version, config, DBroster):
 
-		# development setting
-		hlt = 0 # '1' places box around naked frames/text boxes for dev purposes
-
-		self.version = version
 		self.DBroster = DBroster
 
-		# import styles from config
-		self.background_color = config['background_color']
-		self.header_color = config['header_color']
-		self.prompt_color = config['prompt_color']
-		self.datetime_color = config['datetime_color']
-		self.trim_color = config['trim_color']
-		self.text_color = config['text_color']
-		self.highlight_color = config['highlight_color']
-		self.cursor_color = config['cursor_color']
-		self.progressbar_color = config['progressbar_color']
-		self.progress_good_color = config['progress_good_color']
-		self.progress_med_color = config['progress_med_color']
-		self.progress_bad_color = config['progress_bad_color']
-		self.tab_color = config['tab_color']
-		self.tab_bar_color = config['tab_bar_color']
-		self.accent_color = config['accent_color']
 
-		# set current state variables
-		
+		background_color = config['background_color']
+		header_color = config['header_color']
+		datetime_color = config['datetime_color']
+		progressbar_color = config['progressbar_color']
+		progressbar_good_color = config['progressbar_good_color']
+		progressbar_med_color = config['progressbar_med_color']
+		progressbar_bad_color = config['progressbar_bad_color']
+		tab_color = config['tab_color']
+		border_color = config['border_color']
+		accent_color = config['accent_color']
+		highlight_color = config['highlight_color']
+		text_color = config['text_color']
+		subtext_color = config['subtext_color']
+		cursor_color = config['cursor_color']
+		prompt_color = config['prompt_color']
+		view_status_color = config['view_status_color']
+
+
+		# UI state variables
 		self.current_win = 'Active'
-		self.current_sel = 'aa'
+		self.current_sel = None
 		self.current_tab = list(self.DBroster.keys())[0]
 		self.command_msg = False
 
+
 		self.root = tk.Tk()
-		self.root.title('TasKey ' + self.version)
-		self.root.configure(bg=self.background_color)
-
-		# widgets
-		self.header = tk.Text(self.root)
-		self.header.config(
-			bg=self.background_color,
-			fg=self.header_color,
-			borderwidth=0,
-			highlightthicknes=hlt,
-			padx=10,
-			height=5,
-			width=30
-			)
-
-
-		self.listwin = tk.Text(self.root)
-		self.listwin.config(
-			bg=self.background_color,
-			fg=self.text_color,
-			borderwidth=0,
-			width=60,
-			highlightbackground=self.trim_color,
-			highlightthicknes=1,
-			state='disabled'
-			)
-		self.listwin.tag_config('index', foreground=self.accent_color)
-		self.listwin.tag_config('highlight', foreground=self.highlight_color)
-
-
-		self.infowin = tk.Text(self.root)
-		self.infowin.config(
-			bg=self.background_color,
-			fg=self.text_color,
-			borderwidth=0,
-			width=0,
-			highlightbackground=self.trim_color,
-			highlightthicknes=1,
-			state='disabled'
-			)
-		self.infowin.tag_config('header', foreground=self.accent_color)
-		self.infowin.tag_config('highlight', foreground=self.highlight_color)
-
-
-		self.commandwin = tk.Text(self.root)
-		self.commandwin.config(
-			bg=self.background_color,
-			fg=self.text_color,
-			borderwidth=0,
-			width=0,
-			highlightcolor=self.trim_color,
-			highlightbackground=self.trim_color,
-			highlightthicknes=1,
-			font='Courier',
-			insertofftime=300,
-			padx=5,
-			insertwidth=6,
-			insertbackground=self.cursor_color,
-			height=3
-			)
-		self.commandwin.tag_config('prompt', foreground=self.prompt_color)
-		self.commandwin.tag_config('highlight', foreground=self.highlight_color)
-
-
-		self.tabwin = tk.Text(self.root)
-		self.tabwin.config(
-			bg=self.background_color,
-			fg=self.tab_color,
-			borderwidth=0,
-			width=0,
-			highlightthicknes=hlt,
-			font='Courier',
-			wrap=tk.NONE,
-			state='disabled',
-			height=3,
-			)
-		self.tabwin.tag_config('bar', foreground=self.tab_bar_color)
-		self.tabwin.tag_config('highlight', foreground=self.highlight_color)
-
-
-		self.datetimewin = tk.Text(self.root)
-		self.datetimewin.config(
-			bg=self.background_color,
-			fg=self.datetime_color,
-			borderwidth=0,
-			width=0,
-			highlightthicknes=hlt,
-			state='disabled',
-			padx=5,
-			height=5,
-			)
-
-
-		self.progresswin = tk.Text(self.root)
-		self.progresswin.config(
-			bg=self.background_color,
-			fg=self.progressbar_color,
-			borderwidth=0,
-			width=0,
-			highlightthicknes=hlt,
-			font='Courier',
-			state='disabled',
-			padx=5,
-			pady=5,
-			height=3,
-			)
-		self.progresswin.tag_config('good', foreground=self.progress_good_color)
-		self.progresswin.tag_config('med', foreground=self.progress_med_color)	
-		self.progresswin.tag_config('bad', foreground=self.progress_bad_color)
-
+		self.root.title('TasKey ' + version)
+		self.root.configure(bg=background_color)
 
 		self.root.columnconfigure(0, weight=0)
 		self.root.columnconfigure(1, weight=1)
-		self.root.columnconfigure(2, weight=1)
-
+		self.root.columnconfigure(2, weight=0)
 		self.root.rowconfigure(0, weight=0)
 		self.root.rowconfigure(1, weight=0)
 		self.root.rowconfigure(2, weight=0)
 		self.root.rowconfigure(3, weight=1)
 		self.root.rowconfigure(4, weight=0)
 
-		self.header.grid(row=0, column=0, padx=5, sticky='nsew')
-		self.listwin.grid(row=1, column=0, rowspan=3, columnspan=2, padx=5, pady=5, sticky='nsew')
-		self.infowin.grid(row=3, column=2, padx=5, pady=5, sticky='nsew')
-		self.commandwin.grid(row=4, column=0, columnspan=3, padx=5, pady=5, sticky='nsew')
-		self.tabwin.grid(row=0, column=1, columnspan=2, padx=5, sticky='sew')
-		self.datetimewin.grid(row=1, column=2, padx=5, pady=5, sticky='nsew')
-		self.progresswin.grid(row=2, column=2, padx=5, pady=5, sticky='nsew')
+
+		self.headerwin = tk.Text(self.root)
+		self.headerwin.insert('1.0', '\n' + pyfiglet.figlet_format('TasKey',
+			font = 'smslant'))
+		self.headerwin.delete('7.0', tk.END)
+		self.headerwin.config(bg=background_color, fg=header_color,
+			height=6, width=29, borderwidth=0, highlightthickness=0,
+			state='disabled')
+		self.headerwin.grid(row=0, column=0, rowspan=2, padx=10, sticky='nsew')
+		
+
+		self.datetimeframe = tk.Frame(self.root)
+		self.datetimeframe.config(
+			borderwidth=0, highlightthickness=0)
+		self.datetimeframe.grid(row=0, column=2, sticky='nsew')
+
+		self.datetimeframe.columnconfigure(0, weight=0)
+		self.datetimeframe.columnconfigure(1, weight=0)
+		self.datetimeframe.columnconfigure(2, weight=0)
+		self.datetimeframe.rowconfigure(0, weight=0)
 
 
-		# set initial conditions
-		self.commandwin.focus_set()
-		self.commandwin.insert('1.0', 'TasKey >> ', 'prompt')
+		self.timewin = tk.Text(self.datetimeframe)
+		self.timewin.config(bg=background_color, fg=datetime_color,
+			borderwidth=0, height=4, width=25, highlightthickness=0,
+			state='disabled')
+		self.timewin.tag_config('center', justify=tk.CENTER)
+		self.timewin.grid(row=0, column=0, sticky='nsew')
+		
 
-		self.ASCII_name = pyfiglet.figlet_format('TasKey', font='smslant')
-		self.header.insert('1.0', self.ASCII_name)
-		self.header.config(state='disabled')
+		self.weekdaywin = tk.Text(self.datetimeframe)
+		self.weekdaywin.config(bg=background_color, fg=datetime_color,
+			borderwidth=0, height=4, width=20, highlightthickness=0,
+			state='disabled')
+		self.weekdaywin.tag_config('center', justify=tk.CENTER)
+		self.weekdaywin.grid(row=0, column=1, sticky='nsew')
+
+
+		self.datewin = tk.Text(self.datetimeframe)
+		self.datewin.config(bg=background_color, fg=datetime_color,
+			borderwidth=0, height=4, width=25, highlightthickness=0,
+			state='disabled')
+		self.datewin.tag_config('center', justify=tk.CENTER)
+		self.datewin.grid(row=0, column=2, sticky='nsew')
+
+
+		self.probarwin = tk.Text(self.root)
+		self.probarwin.config(bg=background_color,
+			fg = progressbar_color, borderwidth=0, height=2, width=0,
+			highlightthickness=0, font='Courier', state='disabled')
+		self.probarwin.tag_config('good', foreground=progressbar_good_color)
+		self.probarwin.tag_config('med', foreground=progressbar_med_color)
+		self.probarwin.tag_config('bad', foreground=progressbar_bad_color)
+		self.probarwin.grid(row=1, column=2, sticky='nsew')
+
+
+		self.tabwin = tk.Text(self.root)
+		self.tabwin.config(bg=background_color, fg = tab_color,
+			borderwidth=0, height=2, width=0, highlightthickness=0,
+			font='Courier', state='disabled')
+		self.tabwin.tag_config('highlight', foreground=highlight_color)
+		self.tabwin.grid(row=2, column=0, columnspan=3, padx=5, sticky='nsew')
+
+
+		self.listwin = tk.Text(self.root)
+		self.listwin.config(bg=background_color, fg=text_color,	height=30, 
+			width=120, borderwidth=0, highlightthickness=1,
+			highlightbackground=border_color, font='Courier', wrap=tk.WORD,
+			state='disabled')
+		self.listwin.tag_config('status', foreground=view_status_color)
+		self.listwin.tag_config('accent', foreground=accent_color)
+		self.listwin.tag_config('subtext', foreground=subtext_color)
+		self.listwin.tag_config('highlight', foreground=highlight_color)
+		self.listwin.grid(row=3, column=0, columnspan=3, padx=5, sticky='nsew')
+
+
+		self.comwin = tk.Text(self.root)
+		self.comwin.config(bg=background_color, fg=text_color,
+			height=3, width=0, borderwidth=0, highlightthickness=1,
+			highlightbackground=border_color, highlightcolor=border_color,
+			font='Courier', wrap=tk.WORD, insertofftime=300, insertwidth=6,
+			insertbackground=cursor_color)
+		self.comwin.tag_config('prompt', foreground=prompt_color)
+		self.comwin.grid(row=4, column=0, columnspan=3, padx=5, pady=5,
+			sticky='nsew')
+
 
 		self.root.update()
-		self.BuildTabs()
 		self.ASCII_Datetime()
 		self.ASCII_ProgressBar()
+		self.BuildTabs()
+		self.FocusReturn()
+		self.PromptProtect()
 		self.DispRefresh()
 
 
-		# bindings
 		self.root.bind('<Configure>', self.OnResize)
-		self.commandwin.bind('<FocusOut>', self.FocusReturn)
-		self.commandwin.bind('<KeyRelease>', self.PromptProtect)
-		self.commandwin.bind('<Return>', self.CommandReturn)
+		self.comwin.bind('<FocusOut>', self.FocusReturn)
+		self.comwin.bind('<KeyRelease>', self.PromptProtect)
+		self.comwin.bind('<Return>', self.CommandReturn)
+
 
 		self.root.mainloop()
 
-
-	# definitions 
-	def FocusReturn(self,event):
-		self.commandwin.focus_set()
-
-
-	def PromptProtect(self, event):
-		cursor_position = self.commandwin.index(tk.INSERT)
-		[cursor_line, cursor_column] = cursor_position.split('.')
-		if int(cursor_line) == 1:
-			if int(cursor_column) < 10:
-				self.commandwin.delete('1.0', '1.10')
-				self.commandwin.insert('1.0', 'TasKey >> ', 'prompt')
-
-	def CommandReturn(self, event):
-		if self.command_msg == False:
-			input_raw = self.commandwin.get('1.10', tk.END) # includes the erroneus '\n' at end
-			input_stripped = input_raw[0:len(input_raw)-1] # ending '\n' stripped
-			[target, command] = ComPro(self.DBroster[self.current_tab], input_stripped)
-			self.commandwin.delete('1.10', tk.END)
-			self.UICommandProcessor(target, command)
-		else:
-			self.commandwin.config(state='normal')
-			self.commandwin.delete('1.0', tk.END)
-			self.commandwin.insert('1.0', 'TasKey >> ', 'prompt')
-			self.command_msg = False
-		return 'break'
-
-	def OnResize(self, event):
+	def DispRefresh(self):
 		self.BuildTabs()
-		self.ASCII_ProgressBar()
-		
+		self.DBroster[self.current_tab].reindex()
 
-	def BuildTabs(self):
-		self.tabwin.config(state='normal')
-		self.tabwin.delete('1.0', tk.END)
-		self.tabwin.insert('1.0', '\n\n') # creates required lines
-		tabs = list(self.DBroster.keys())
-		for tab in tabs:
-			nochars = len(tab)
-			line1 = ' ' + '_'*nochars + ' '
-			line2 = '/' + tab + '\\'
-			if tab == self.current_tab:
-				self.tabwin.insert('1.end', line1, 'highlight')
-				self.tabwin.insert('2.end', line2, 'highlight')
-			else:
-				self.tabwin.insert('1.end', line1)
-				self.tabwin.insert('2.end', line2)
+		self.listwin.config(state='normal')
+		self.listwin.delete('1.0', tk.END)
 
-		[x,y,w,h] = self.root.grid_bbox(1, 0, 2, 0)
-		charwidth = tkf.Font(font='Courier').measure('/')
-		maxchars = int(w/charwidth - 3)
-		tab_len = len(self.tabwin.get('2.0', '2.end'))
-
-		# insures backslashes are at least as long as tabs, even when wrapped
-		if tab_len > maxchars:
-			self.tabwin.insert('3.0', '\\'*(tab_len + 1), 'bar')
+		[x,y,w,h] = self.root.grid_bbox(0, 3, 2, 3)
+		charwidth = tkf.Font(font='Courier').measure('0')
+		buffer = tkf.Font(font='Courier').measure('  aa  //0000-00-00 [000]')
+		wraplen = int((w-buffer)/charwidth)
+		if self.current_win == 'Active':
+			self.listwin.insert('1.0', '//Main//\n', 'status')
+			for task in self.DBroster[self.current_tab].Active:
+				if task.alpha_index != self.current_sel:
+					config = {
+						'L1': '  ' + task.alpha_index + '  ',
+						'L2': '      ',
+						'F1': ' //' + str(task.deadline) + ' [' +\
+							'{0:03.0f}'.format(task.remaining) + ']',
+						'L1tag': 'accent',
+						'F1tag': 'subtext',
+						'tag': None,
+						'wrap': wraplen,
+						'width': w,
+						'charwidth': charwidth
+						}
+					self.AddBranch(task.name, config)
+					if task.footnote != None:
+						config = {
+							'L1': u'      \u2514\u2500\u2500 ',
+							'L2': '          ',
+							'F1': None,
+							'L1tag': 'subtext',
+							'F1tag': None,
+							'tag': 'subtext',
+							'wrap': wraplen,
+							'width': w,
+							'charwidth': charwidth
+							}
+						self.AddBranch(task.footnote, config)
+				else:
+					config = {
+						'L1': '  ' + task.alpha_index + '  ',
+						'L2': '      ',
+						'F1': ' //' + str(task.deadline) + ' [' +\
+							'{0:03.0f}'.format(task.remaining) + ']',
+						'L1tag': 'highlight',
+						'F1tag': 'subtext',
+						'tag': 'accent',
+						'wrap': wraplen,
+						'width': w,
+						'charwidth': charwidth
+						}
+					self.AddBranch(task.name, config)
+					config = {
+							'L1': u'      \u251c\u2500\u2500 ',
+							'L2': u'      \u2502   ',
+							'F1': None,
+							'L1tag': 'subtext',
+							'F1tag': None,
+							'tag': 'subtext',
+							'wrap': wraplen,
+							'width': w,
+							'charwidth': charwidth
+							}
+					self.AddBranch('Footnote: ' + task.footnote, config)
+					self.listwin.insert(tk.END, u'      \u2502\n', 'subtext')
+					config = {
+						'L1': u'      \u251c\u2500\u2500 ',
+						'L2': '          ',
+						'F1': None,
+						'L1tag': 'subtext',
+						'F1tag': None,
+						'tag': 'subtext',
+						'wrap': wraplen,
+						'width': w,
+						'charwidth': charwidth
+						}
+					self.AddBranch('Priority.........' + task.priority, config)
+					self.AddBranch('Priority Score...' +\
+						str(task.score), config)
+					if not task.hard_deadline:
+						self.AddBranch('Deadline.........' +\
+							str(task.deadline) + '(Auto)', config)
+					else:
+						self.AddBranch('Deadline.........' +\
+							str(task.deadline) + '(Manual)', config)
+					self.AddBranch('Days Remaining...' +\
+						str(task.remaining), config)
+					self.AddBranch('Created By.......' + task.author, config)
+					config = {
+						'L1': u'      \u2514\u2500\u2500 ',
+						'L2': '          ',
+						'F1': None,
+						'L1tag': 'subtext',
+						'F1tag': None,
+						'tag': 'subtext',
+						'wrap': wraplen,
+						'width': w,
+						'charwidth': charwidth
+						}
+					self.AddBranch('Created on.......' +\
+						str(task.created), config)
 		else:
-			self.tabwin.insert('3.0', '\\'*maxchars, 'bar')
+			self.listwin.insert('1.0', '!!ARCHIVE!!\n', 'highlight')
+			for task in self.DBroster[self.current_tab].Archive:
+				if task.alpha_index != self.current_sel:
+					config = {
+						'L1': '  ' + task.alpha_index + '  ',
+						'L2': '      ',
+						'F1': ' //' + str(task.occurred),
+						'L1tag': 'accent',
+						'F1tag': 'subtext',
+						'tag': None,
+						'wrap': wraplen,
+						'width': w,
+						'charwidth': charwidth
+						}
+					self.AddBranch(task.name, config)
+					if task.footnote != None:
+						config = {
+							'L1': u'      \u2514\u2500\u2500 ',
+							'L2': '          ',
+							'F1': None,
+							'L1tag': 'subtext',
+							'F1tag': None,
+							'tag': 'subtext',
+							'wrap': wraplen,
+							'width': w,
+							'charwidth': charwidth
+							}
+						self.AddBranch(task.footnote, config)
+				else:
+					config = {
+						'L1': '  ' + task.alpha_index + '  ',
+						'L2': '      ',
+						'F1': ' //' + str(task.occurred),
+						'L1tag': 'highlight',
+						'F1tag': 'subtext',
+						'tag': 'accent',
+						'wrap': wraplen,
+						'width': w,
+						'charwidth': charwidth
+						}
+					self.AddBranch(task.name, config)
+					config = {
+							'L1': u'      \u251c\u2500\u2500 ',
+							'L2': u'      \u2502   ',
+							'F1': None,
+							'L1tag': 'subtext',
+							'F1tag': None,
+							'tag': 'subtext',
+							'wrap': wraplen,
+							'width': w,
+							'charwidth': charwidth
+							}
+					self.AddBranch('Footnote: ' + task.footnote, config)
+					self.listwin.insert(tk.END, u'      \u2502\n', 'subtext')
+					config = {
+						'L1': u'      \u251c\u2500\u2500 ',
+						'L2': '          ',
+						'F1': None,
+						'L1tag': 'subtext',
+						'F1tag': None,
+						'tag': 'subtext',
+						'wrap': wraplen,
+						'width': w,
+						'charwidth': charwidth
+						}
+					self.AddBranch('Priority.........' + task.priority, config)
+					if not task.hard_deadline:
+						self.AddBranch('Deadline.........' +\
+							str(task.deadline) + '(Auto)', config)
+					else:
+						self.AddBranch('Deadline.........' +\
+							str(task.deadline) + '(Manual)', config)
+					self.AddBranch('Created By.......' + task.author, config)
+					self.AddBranch('Created on.......' +\
+						str(task.created), config)
+					self.AddBranch('Modified By......' +\
+						task.modifier, config)
+					self.AddBranch('Modified on......' +\
+						str(task.occurred), config)
+					config = {
+						'L1': u'      \u2514\u2500\u2500 ',
+						'L2': '          ',
+						'F1': None,
+						'L1tag': 'subtext',
+						'F1tag': None,
+						'tag': 'subtext',
+						'wrap': wraplen,
+						'width': w,
+						'charwidth': charwidth
+						}
+					self.AddBranch('Reason..........' + task.reason, config)
+		self.listwin.config(state='disabled')
 
-		self.tabwin.config(state='disabled')
+
+	def AddBranch(self, string, config):
+		''' TKinter's build in text wrapping functionality was insufiencent when
+		trying to implement TasKey's task display scheme (based on unicode file
+		trees). This function allows for dynamic wrapping and inclusion of tree
+		elements.
+		'''
+		# u'\u251c' # T-symbol
+		# u'\u2514' # L-symbol
+		# u'\u2502' # vertical line
+		# u'\u2500' # horizontal line
+
+		L1 = config['L1'] # first line "Leader" string
+		L2 = config['L2'] # "Leader" string for subsequent lines
+		F1 = config['F1'] # first line "Follower" string
+		L1tag = config['L1tag'] # first line "Leader" tag
+		F1tag = config['F1tag'] # first line "Follower" tag
+		tag = config['tag'] # general body tag
+		wrap = config['wrap'] # wrap length in characters
+		width = config['width'] # width of listwin in pixels
+		charwidth = config['charwidth'] # character width in pixels
+
+		branch = {0: ''}
+		total = 0
+		currentline = 0
+		for word in string.split(' '):
+			wordlen = len(word)
+			if total + wordlen != len(string):
+				addition = word + ' '
+				total += len(addition)
+			else:
+				addition = word
+			linelen = len(branch[currentline]) + len(addition)
+			if linelen <= wrap:
+				if branch[currentline] != '':
+					branch[currentline] += addition
+				else:
+					branch[currentline] = L1 + addition
+			else:
+				currentline += 1
+				try:
+					branch[currentline] += addition
+				except:
+					branch[currentline] = L2 + addition
+
+		for key in list(branch.keys()):
+			if key > 0:
+				self.listwin.insert(tk.END, branch[key] + '\n', tag)
+			else:
+				self.listwin.insert(tk.END, branch[key][:len(L1)], L1tag)
+				self.listwin.insert(tk.END, branch[key][len(L1):], tag)
+				if F1 != None:
+					remaining = int(width/charwidth - len(branch[key]) - 2)
+					buffer = ' ' * (remaining - len(F1))
+					self.listwin.insert(tk.END, buffer + F1 + '\n', F1tag)
+				else:
+					self.listwin.insert(tk.END, '\n')
 
 
 	def ASCII_Datetime(self):
-		current = datetime.datetime.now()
-
-		hour = str(current.hour)
-		if len(hour) == 1:
-			hour = '0' + hour
-		minute = str(current.minute)
-		if len(minute) == 1:
-			minute = '0' + minute
-
+		ct = datetime.datetime.now()
+		hour = '{0:02.0f}'.format(ct.hour)
+		minute = '{0:02.0f}'.format(ct.minute)
 		weekdays = ['Mon', 'Tus', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
-		weekday = weekdays[current.weekday()]
-		day = str(current.day)
-		month = str(current.month)
-		year = str(current.year)
+		weekday = weekdays[ct.weekday()]
+		day = '{0:02.0f}'.format(ct.day)
+		month = '{0:02.0f}'.format(ct.month)
 
-		datetime_str = hour+':'+minute +'  '+ weekday+' ' + month+'.' +day
-		ASCII_datetime = pyfiglet.figlet_format(datetime_str, font='smslant')
+		self.timewin.config(state='normal')
+		self.timewin.delete('1.0', tk.END)
+		ASCII_time = pyfiglet.figlet_format(hour + ':' + minute, font='smslant')
+		self.timewin.insert('1.0', ASCII_time, 'center')
+		self.timewin.delete('5.0', tk.END)
+		self.timewin.config(state='disabled')
+		
+		self.weekdaywin.config(state='normal')
+		self.weekdaywin.delete('1.0', tk.END)
+		ASCII_weekday = pyfiglet.figlet_format(weekday, font='smslant')
+		self.weekdaywin.insert('1.0', ASCII_weekday, 'center')
+		self.weekdaywin.delete('5.0', tk.END)
+		self.weekdaywin.config(state='disabled')
 
-		self.datetimewin.config(state='normal')
-		self.datetimewin.delete('1.0', tk.END)
-		self.datetimewin.insert('1.0', ASCII_datetime)
-		self.datetimewin.config(state='disabled')
-
-		layer = ASCII_datetime.split('\n')[0]
-		width = tkf.Font(font='Courier').measure(layer)
-		self.root.columnconfigure(2, minsize=width)
+		self.datewin.config(state='normal')
+		self.datewin.delete('1.0', tk.END)
+		ASCII_date = pyfiglet.figlet_format(month + '. ' + day, font='smslant')
+		self.datewin.insert('1.0', ASCII_date, 'center')
+		self.datewin.delete('5.0', tk.END)
+		self.datewin.config(state='disabled')
 
 		self.root.after(1000, self.ASCII_Datetime)
 
 
 	def ASCII_ProgressBar(self):
+
 		def BarColor(complete, of, barchar_length, bad, med):
 			precent = complete/of
 			no_bars = int(barchar_length * precent)
@@ -314,139 +469,90 @@ class TasKeyUI:
 				char = bar[i]
 				if char == '/':
 					if i < rel_bad:
-						self.progresswin.insert(tk.END, char, 'bad')
+						self.probarwin.insert(tk.END, char, 'bad')
 					elif i < rel_med:
-						self.progresswin.insert(tk.END, char, 'med')
+						self.probarwin.insert(tk.END, char, 'med')
 					else:
-						self.progresswin.insert(tk.END, char, 'good')
+						self.probarwin.insert(tk.END, char, 'good')
 				else:
-					self.progresswin.insert(tk.END, char)
+					self.probarwin.insert(tk.END, char)
 
-		[x,y,w,h] = self.root.grid_bbox(2, 2)
+		[x,y,w,h] = self.root.grid_bbox(2, 1)
 		packaging_length = tkf.Font(font='Courier').measure('Critical Tasks [] 000.0%')
 		charwidth = tkf.Font(font='Courier').measure('/')
-		barchar_length = int((w - packaging_length)/charwidth - 3)
+		barchar_length = int((w - packaging_length)/charwidth - 1)
 
-		self.progresswin.config(state='normal')
-		self.progresswin.delete('1.0', tk.END)
+		self.probarwin.config(state='normal')
+		self.probarwin.delete('1.0', tk.END)
 
 		critical = 5
 		critical_complete = 1
 		critical_precent = str(round((critical_complete/critical)*100, 1))
-		self.progresswin.insert('1.0', 'Critical Tasks [')
+		self.probarwin.insert('1.0', 'Critical Tasks [')
 		BarColor(critical_complete, critical, barchar_length, 0.5, 0.75)
-		self.progresswin.insert(tk.END, '] ' + critical_precent + '%' + '\n')
+		self.probarwin.insert(tk.END, '] ' + critical_precent + '%' + '\n')
 
 		weekly = 10
 		weekly_complete = 5
 		weekly_precent = str(round((weekly_complete/weekly)*100, 1))
-		self.progresswin.insert('2.0', '  Weekly Tasks [')
+		self.probarwin.insert('2.0', '  Weekly Tasks [')
 		BarColor(weekly_complete, weekly, barchar_length, 0.25, 0.5)
-		self.progresswin.insert(tk.END, '] ' + weekly_precent + '%' + '\n')
+		self.probarwin.insert(tk.END, '] ' + weekly_precent + '%' + '\n')
 
-		total = 28
-		total_complete  = 8
-		total_precent = str(round((total_complete/total)*100, 1))
-		self.progresswin.insert('3.0', '   Total Tasks [')
-		BarColor(total_complete, total, barchar_length, 0.1, 0.25)
-		self.progresswin.insert(tk.END, '] ' + total_precent + '%')
-
-		self.progresswin.config(state='disabled')
-
-
-	def DispRefresh(self):
-		# self.current_win = 'Active'
-		# self.current_sel = 'aa'
-		self.BuildTabs()
-		self.DBroster[self.current_tab].reindex()
-
-		self.listwin.config(state='normal')
-		self.listwin.delete('1.0', tk.END)
-		self.infowin.config(state='normal')
-		self.infowin.delete('1.0', tk.END)
-
-		if self.current_win == 'Active':
-			for task in self.DBroster[self.current_tab].Active:
-				alpha_index = task.alpha_index
-				if alpha_index == self.current_sel:
-					self.listwin.insert(tk.END, alpha_index, 'highlight')
-					self.listwin.insert(tk.END, ' ' + task.name + '\n')
-
-					self.infowin.insert(tk.END, 'Task Name: ', 'header')
-					self.infowin.insert(tk.END, task.name + '\n')
-					self.infowin.insert(tk.END, 'Footnote: ', 'header')
-					self.infowin.insert(tk.END, str(task.footnote) + '\n')
-					self.infowin.insert(tk.END, 'Priority: ', 'header')
-					self.infowin.insert(tk.END, task.priority + '\n')
-					self.infowin.insert(tk.END, 'Score: ', 'header')
-					self.infowin.insert(tk.END, str(task.score) + '\n')
-
-					self.infowin.insert(tk.END, 'Deadline: ', 'header')
-					if task.hard_deadline:
-						self.infowin.insert(tk.END, str(task.deadline))
-						self.infowin.insert(tk.END, ' (Manual)\n', 'highlight')
-					else:
-						self.infowin.insert(tk.END, str(task.deadline))
-						self.infowin.insert(tk.END, ' (Auto)\n', 'highlight')
-
-					self.infowin.insert(tk.END, 'Working Days Remaining: ', 'header')
-					self.infowin.insert(tk.END, str(task.remaining) + '\n')
-					self.infowin.insert(tk.END, 'Created by: ', 'header')
-					self.infowin.insert(tk.END, task.author + '\n')
-					self.infowin.insert(tk.END, 'Created on: ', 'header')
-					self.infowin.insert(tk.END, str(task.created) + '\n')
-
-				else:
-					self.listwin.insert(tk.END, alpha_index, 'index')
-					self.listwin.insert(tk.END, ' ' + task.name + '\n')
+		self.probarwin.delete('3.0', tk.END)
+		self.probarwin.config(state='disabled')
 		
-		elif self.current_win == 'Archive':
-			for task in self.DBroster[self.current_tab].Archive:
-				alpha_index = task.alpha_index
-				if alpha_index == self.current_sel:
-					self.listwin.insert(tk.END, alpha_index, 'highlight')
-					self.listwin.insert(tk.END, ' ' + task.name + '\n')
 
-					self.infowin.insert(tk.END, 'Task Name: ', 'header')
-					self.infowin.insert(tk.END, task.name + '\n')
-					self.infowin.insert(tk.END, 'Footnote: ', 'header')
-					self.infowin.insert(tk.END, str(task.footnote) + '\n')
-					self.infowin.insert(tk.END, 'Priority: ', 'header')
-					self.infowin.insert(tk.END, task.priority + '\n')
-					
-					self.infowin.insert(tk.END, 'Deadline: ', 'header')
-					if task.hard_deadline:
-						self.infowin.insert(tk.END, str(task.deadline))
-						self.infowin.insert(tk.END, ' (Manual)\n', 'highlight')
-					else:
-						self.infowin.insert(tk.END, str(task.deadline))
-						self.infowin.insert(tk.END, ' (Auto)\n', 'highlight')
-
-					self.infowin.insert(tk.END, 'Created by: ', 'header')
-					self.infowin.insert(tk.END, task.author + '\n')
-					self.infowin.insert(tk.END, 'Created on: ', 'header')
-					self.infowin.insert(tk.END, str(task.created) + '\n')
-					self.infowin.insert(tk.END, 'Modified by: ', 'header')
-					self.infowin.insert(tk.END, task.modifier + '\n')
-					self.infowin.insert(tk.END, 'Modified on: ', 'header')
-					self.infowin.insert(tk.END, str(task.occurred) + '\n')
-					self.infowin.insert(tk.END, 'Reason: ', 'header')
-					self.infowin.insert(tk.END, task.reason + '\n')
-
-				else:
-					self.listwin.insert(tk.END, alpha_index, 'index')
-					self.listwin.insert(tk.END, ' ' + task.name + '\n')
-
-		self.listwin.config(state='disabled')
-		self.infowin.config(state='disabled')
+	def BuildTabs(self):
+		self.tabwin.config(state='normal')
+		self.tabwin.delete('1.0', tk.END)
+		self.tabwin.insert('1.0', '\n\n')
+		tabs = list(self.DBroster.keys())
+		for tab in tabs:
+			line1 = ' ' + '_'*len(tab) + ' '
+			line2 = '/' + tab + '\\'
+			if tab == self.current_tab:
+				self.tabwin.insert('1.end', line1, 'highlight')
+				self.tabwin.insert('2.end', line2, 'highlight')
+			else:
+				self.tabwin.insert('1.end', line1)
+				self.tabwin.insert('2.end', line2)
+		self.tabwin.delete('3.0', tk.END)
+		self.tabwin.config(state='disabled')
 
 
-	def CommandMsg(self, message):
-		self.command_msg = True
-		self.commandwin.delete('1.0', tk.END)
-		self.commandwin.insert('1.0', message, 'highlight')
-		self.commandwin.insert(tk.END, ' <press enter to continue>', 'prompt')
-		self.commandwin.config(state='disabled')
+	def FocusReturn(self,event=None):
+		self.comwin.focus_set()
+
+
+	def PromptProtect(self, event=None):
+		cursor_position = self.comwin.index(tk.INSERT)
+		[cursor_line, cursor_column] = cursor_position.split('.')
+		if int(cursor_line) == 1:
+			if int(cursor_column) < 10:
+				self.comwin.delete('1.0', '1.10')
+				self.comwin.insert('1.0', 'TasKey >> ', 'prompt')
+
+
+	def OnResize(self, event):
+		self.BuildTabs()
+		self.ASCII_ProgressBar()
+		self.DispRefresh()
+
+
+	def CommandReturn(self, event):
+		if self.command_msg == False:
+			com_input = self.comwin.get('1.10', tk.END).strip()
+			[target, command] = ComPro(self.DBroster[self.current_tab],
+				com_input)
+			self.comwin.delete('1.10', tk.END)
+			self.UICommandProcessor(target, command)
+		else:
+			self.comwin.config(state='normal')
+			self.comwin.delete('1.0', tk.END)
+			self.comwin.insert('1.0', 'TasKey >> ', 'prompt') 
+			self.command_msg = False
+		return 'break'
 
 
 	def UICommandProcessor(self, target, command):
@@ -455,13 +561,15 @@ class TasKeyUI:
 				self.current_sel = command
 			elif target == 'win':
 				self.current_win = command
-				self.current_sel == 'aa'
+				self.current_sel == None
 			elif target == 'tab':
 				self.current_tab = command
 			elif target == 'msg':
 				self.CommandMsg(command)
 			elif target == 'prune':
-				path_roster = self.GetPaths()
+				path_roster = {}
+				for name in list(self.DBroster.keys()):
+					path_roster[name] = self.DBroster[name].path
 				BatchPrune(path_roster, del_all=False)
 			elif target == 'kill':
 				self.root.destroy()				
@@ -469,11 +577,9 @@ class TasKeyUI:
 		self.DispRefresh()
 
 
-	def GetPaths(self):
-		names = list(self.DBroster.keys())
-		path_roster = {}
-		for name in names:
-			path = self.DBroster[name].path
-			path_roster[name] = path
-		return path_roster
-
+	def CommandMsg(self, message):
+		self.command_msg = True
+		self.commandwin.delete('1.0', tk.END)
+		self.commandwin.insert('1.0', message, 'highlight')
+		self.commandwin.insert(tk.END, ' <press enter to continue>', 'prompt')
+		self.commandwin.config(state='disabled')
