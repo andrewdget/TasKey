@@ -9,8 +9,10 @@ import tkinter as tk
 import tkinter.font as tkf
 import pyfiglet
 import datetime
-import time
+import math
 
+from CommandProcessor import *
+# from FileManagement import BatchPrune
 from FileManagement import *
 
 ## DEFINITIONS ##
@@ -41,7 +43,7 @@ class TasKeyUI:
 
 		# UI state variables
 		self.current_win = 'Active'
-		self.current_sel = 'aa'
+		self.current_sel = None
 		self.current_tab = list(self.DBroster.keys())[0]
 		self.command_msg = False
 
@@ -117,7 +119,10 @@ class TasKeyUI:
 
 
 		self.tabwin = tk.Text(self.root)
-		self.tabwin.config(bg=background_color, fg = tab_color,
+		self.tabwin.config(
+			bg=background_color,
+			# bg='green',
+			fg = tab_color,
 			borderwidth=0, height=2, width=70, highlightthickness=0,
 			font='Courier', state='disabled')
 		self.tabwin.tag_config('highlight', foreground=highlight_color)
@@ -125,8 +130,8 @@ class TasKeyUI:
 
 
 		self.listframe = tk.Frame(self.root)
-		self.listframe.config(borderwidth=0, highlightthickness=1,
-			highlightbackground=border_color)
+		self.listframe.config(bg=background_color, borderwidth=0,
+			highlightthickness=1, highlightbackground=border_color)
 		self.listframe.grid(row=3, column=0, columnspan=3, padx=5, sticky='nsew')
 
 		self.listframe.columnconfigure(0, weight=0)
@@ -136,23 +141,32 @@ class TasKeyUI:
 
 
 		self.alphaindexwin = tk.Text(self.listframe)
-		self.alphaindexwin.config(bg=background_color,
+		self.alphaindexwin.config(
+			bg=background_color,
+			# bg='blue',
 			fg=accent_color, height=30, width=2, borderwidth=0,
 			highlightthickness=0, font='Courier', state='disabled')
 		self.alphaindexwin.tag_config('highlight', foreground=highlight_color)
-		self.alphaindexwin.grid(row=0, column=0, sticky='nsew')
+		self.alphaindexwin.grid(row=0, column=0, padx=5, sticky='nsew')
 
 
 		self.listwin = tk.Text(self.listframe)
-		self.listwin.config(bg=background_color, fg=text_color,
+		self.listwin.config(
+			bg=background_color,
+			# bg='red',
+			fg=text_color,
 			height=30, width=100, borderwidth=0, highlightthickness=0,
 			font='Courier', wrap=tk.WORD, state='disabled')
+		self.listwin.tag_config('subtext', foreground=subtext_color)
 		self.listwin.grid(row=0, column=1, sticky='nsew')
 
 
 		self.deadlinewin = tk.Text(self.listframe)
-		self.deadlinewin.config(bg=background_color, fg=subtext_color,
-			height=30, width=20, borderwidth=0, highlightthickness=0,
+		self.deadlinewin.config(
+			bg=background_color,
+			# bg='yellow',
+			fg=subtext_color,
+			height=30, width=18, borderwidth=0, highlightthickness=0,
 			font='Courier', state='disabled')
 		self.deadlinewin.grid(row=0, column=2, sticky='nsew')
 		
@@ -178,8 +192,116 @@ class TasKeyUI:
 		self.root.bind('<Configure>', self.OnResize)
 		self.comwin.bind('<FocusOut>', self.FocusReturn)
 		self.comwin.bind('<KeyRelease>', self.PromptProtect)
+		self.comwin.bind('<Return>', self.CommandReturn)
+
+
+		task = self.DBroster['TasKey'].Active[0]
+		
+		self.alphaindexwin.config(state='normal')
+		self.alphaindexwin.insert('1.0', '\n'*20)
+		self.alphaindexwin.insert('1.0', task.alpha_index)
+		self.alphaindexwin.config(state='disabled')
+
+
+		self.listwin.config(state='normal')
+		self.listwin.insert('1.0', task.name + '\n')
+
+		self.AddBranch(task.footnote, 100)
+		self.listwin.insert(tk.END, u'\u2502\n', 'subtext')
+		self.AddBranch('Priority: ' + task.priority, 100)
+		self.AddBranch('Priority Score: ' + str(task.score), 100)
+		if task.hard_deadline:
+			self.AddBranch('Deadline: ' + str(task.deadline) + ' (Manual)', 100)
+		else:
+			self.AddBranch('Deadline: ' + str(task.deadline) + ' (Auto)', 100)
+		self.AddBranch('Working Days Remaining: ' + str(task.remaining), 100)
+		self.AddBranch('Created by: ' + task.author, 100)
+		self.AddBranch('Created on: ' + str(task.created), 100, last=True)
+
+		
+		task2 = self.DBroster['TasKey'].Active[0]
+		self.listwin.insert(tk.END, task2.name)
+		cursor_position = self.listwin.index(tk.INSERT)
+		[cursor_line, cursor_column] = cursor_position.split('.')
+		print(cursor_line)
+
+		self.alphaindexwin.config(state='normal')
+		self.alphaindexwin.insert('13.0', task.alpha_index)
+		self.alphaindexwin.config(state='disabled')
+
+
+
+		self.listwin.config(state='disabled')
+
+
+		
+
+
+
+
+		self.deadlinewin.config(state='normal')
+		deadtext = '//' + str(task.deadline) + ' [' + '{0:3.0f}'.format(task.remaining) + ']'
+		self.deadlinewin.insert('1.0', deadtext)
+		self.deadlinewin.config(state='disabled')
+
+
+
+		# print(task.alpha_index)
+		# print(task.name)
+		# print(task.footnote)
+		# print(task.deadline)
+		# print(task.remaining)
+
+
+
+		# print(u'\u251c') # t-handle
+		# print(u'\u2502') # down-line
+		# print(u'\u2514') # L-line
+		# print(u'\u2500') # horizontal line
+
+
+
+
 
 		self.root.mainloop()
+
+
+
+	def AddBranch(self, string, wraplen, last=False):
+		branch = {0: ''}
+		total = 0
+		currentline = 0
+		for word in string.split(' '):
+			wordlen = len(word)
+			if total + wordlen != len(string):
+				addition = word + ' '
+				total += len(addition)
+			else:
+				addition = word
+			linelen = len(branch[currentline]) + len(addition)
+			if linelen <= wraplen:
+				if branch[currentline] != '':
+					branch[currentline] += addition
+				else:
+					if not last:
+						branch[currentline] = u'\u251c\u2500\u2500 ' + addition
+					else:
+						branch[currentline] = u'\u2514\u2500\u2500 ' + addition
+			else:
+				currentline += 1
+				try:
+					branch[currentline] += addition
+				except:
+					if not last:
+						branch[currentline] = u'\u2502   ' + addition
+					else:
+						branch[currentline] = '    ' + addition
+		for key in list(branch.keys()):
+			self.listwin.insert(tk.END, branch[key] + '\n', 'subtext')
+
+
+
+
 
 
 	def ASCII_Datetime(self):
@@ -300,6 +422,42 @@ class TasKeyUI:
 		self.ASCII_ProgressBar()
 
 
+	def CommandReturn(self, event):
+		if self.command_msg == False:
+			com_input = self.comwin.get('1.10', tk.END).strip()
+			[target, command] = ComPro(self.DBroster[self.current_tab],
+				com_input)
+			self.comwin.delete('1.10', tk.END)
+			self.UICommandProcessor(target, command)
+		else:
+			self.comwin.config(state='normal')
+			self.comwin.delete('1.0', tk.END)
+			self.comwin.insert('1.0', 'TasKey >> ', 'prompt') 
+			self.command_msg = False
+		return 'break'
+
+
+	def UICommandProcessor(self, target, command):
+		if target != None:
+			if target == 'sel':
+				self.current_sel = command
+			elif target == 'win':
+				self.current_win = command
+				self.current_sel == None
+			elif target == 'tab':
+				self.current_tab = command
+			elif target == 'msg':
+				self.CommandMsg(command)
+			elif target == 'prune':
+				path_roster = {}
+				for name in list(self.DBroster.keys()):
+					path_roster[name] = self.DBroster[name].path
+				BatchPrune(path_roster, del_all=False)
+			elif target == 'kill':
+				self.root.destroy()				
+				return self.DBroster
+		self.DispRefresh()
+
 ## EXECUTABLE ## 
 
 exec(open('./Data/Paths.txt').read())
@@ -307,7 +465,7 @@ exec(open('./Data/Config.txt').read())
 
 DBroster = BatchLoadDB(config, path_roster)
 
-TasKeyUI('v- 0.00.00 (Alpha)', None, DBroster)
+TasKeyUI('v- 0.01.00 (Alpha)', None, DBroster)
 
 
 
