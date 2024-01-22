@@ -19,25 +19,26 @@ from FileManagement import BatchPrune
 class TasKeyUI:
 	def __init__(self, version, config, DBroster):
 
+		self.config = config
 		self.DBroster = DBroster
 
 
-		background_color = config['background_color']
-		header_color = config['header_color']
-		datetime_color = config['datetime_color']
-		progressbar_color = config['progressbar_color']
-		progressbar_good_color = config['progressbar_good_color']
-		progressbar_med_color = config['progressbar_med_color']
-		progressbar_bad_color = config['progressbar_bad_color']
-		tab_color = config['tab_color']
-		border_color = config['border_color']
-		accent_color = config['accent_color']
-		highlight_color = config['highlight_color']
-		text_color = config['text_color']
-		subtext_color = config['subtext_color']
-		cursor_color = config['cursor_color']
-		prompt_color = config['prompt_color']
-		view_status_color = config['view_status_color']
+		background_color = self.config['background_color']
+		header_color = self.config['header_color']
+		datetime_color = self.config['datetime_color']
+		progressbar_color = self.config['progressbar_color']
+		progressbar_good_color = self.config['progressbar_good_color']
+		progressbar_med_color = self.config['progressbar_med_color']
+		progressbar_bad_color = self.config['progressbar_bad_color']
+		tab_color = self.config['tab_color']
+		border_color = self.config['border_color']
+		accent_color = self.config['accent_color']
+		highlight_color = self.config['highlight_color']
+		text_color = self.config['text_color']
+		subtext_color = self.config['subtext_color']
+		cursor_color = self.config['cursor_color']
+		prompt_color = self.config['prompt_color']
+		view_status_color = self.config['view_status_color']
 
 
 		# UI state variables
@@ -163,6 +164,120 @@ class TasKeyUI:
 
 
 		self.root.mainloop()
+
+
+	def ASCII_Datetime(self):
+		ct = datetime.datetime.now()
+		hour = '{0:02.0f}'.format(ct.hour)
+		minute = '{0:02.0f}'.format(ct.minute)
+		weekdays = ['Mon', 'Tus', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
+		weekday = weekdays[ct.weekday()]
+		day = '{0:02.0f}'.format(ct.day)
+		month = '{0:02.0f}'.format(ct.month)
+
+		self.timewin.config(state='normal')
+		self.timewin.delete('1.0', tk.END)
+		ASCII_time = pyfiglet.figlet_format(hour + ':' + minute, font='smslant')
+		self.timewin.insert('1.0', ASCII_time, 'center')
+		self.timewin.delete('5.0', tk.END)
+		self.timewin.config(state='disabled')
+		
+		self.weekdaywin.config(state='normal')
+		self.weekdaywin.delete('1.0', tk.END)
+		ASCII_weekday = pyfiglet.figlet_format(weekday, font='smslant')
+		self.weekdaywin.insert('1.0', ASCII_weekday, 'center')
+		self.weekdaywin.delete('5.0', tk.END)
+		self.weekdaywin.config(state='disabled')
+
+		self.datewin.config(state='normal')
+		self.datewin.delete('1.0', tk.END)
+		ASCII_date = pyfiglet.figlet_format(month + '. ' + day, font='smslant')
+		self.datewin.insert('1.0', ASCII_date, 'center')
+		self.datewin.delete('5.0', tk.END)
+		self.datewin.config(state='disabled')
+
+		self.root.after(1000, self.ASCII_Datetime)
+
+
+	def ASCII_ProgressBar(self):
+
+		def BarColor(complete, of, barchar_length, bad, med):
+			precent = complete/of
+			no_bars = int(barchar_length * precent)
+			no_space = barchar_length - no_bars
+
+			rel_bad = int(barchar_length*bad)
+			rel_med = int(barchar_length*med)
+
+			bar = '/'*no_bars + '-'*no_space
+			for i in range(len(bar)):
+				char = bar[i]
+				if char == '/':
+					if i < rel_bad:
+						self.probarwin.insert(tk.END, char, 'bad')
+					elif i < rel_med:
+						self.probarwin.insert(tk.END, char, 'med')
+					else:
+						self.probarwin.insert(tk.END, char, 'good')
+				else:
+					self.probarwin.insert(tk.END, char)
+
+		[x,y,w,h] = self.root.grid_bbox(2, 1)
+		packaging_length = tkf.Font(font='Courier').measure('Critical Tasks [] 000.0%')
+		charwidth = tkf.Font(font='Courier').measure('/')
+		barchar_length = int((w - packaging_length)/charwidth - 1)
+
+		self.probarwin.config(state='normal')
+		self.probarwin.delete('1.0', tk.END)
+
+		critical = 5
+		critical_complete = 1
+		critical_precent = str(round((critical_complete/critical)*100, 1))
+		self.probarwin.insert('1.0', 'Critical Tasks [')
+		BarColor(critical_complete, critical, barchar_length, 0.5, 0.75)
+		self.probarwin.insert(tk.END, '] ' + critical_precent + '%' + '\n')
+
+		weekly = 10
+		weekly_complete = 5
+		weekly_precent = str(round((weekly_complete/weekly)*100, 1))
+		self.probarwin.insert('2.0', '  Weekly Tasks [')
+		BarColor(weekly_complete, weekly, barchar_length, 0.25, 0.5)
+		self.probarwin.insert(tk.END, '] ' + weekly_precent + '%' + '\n')
+
+		self.probarwin.delete('3.0', tk.END)
+		self.probarwin.config(state='disabled')
+		
+
+	def BuildTabs(self):
+		self.tabwin.config(state='normal')
+		self.tabwin.delete('1.0', tk.END)
+		self.tabwin.insert('1.0', '\n\n')
+		tabs = list(self.DBroster.keys())
+		for tab in tabs:
+			line1 = ' ' + '_'*len(tab) + ' '
+			line2 = '/' + tab + '\\'
+			if tab == self.current_tab:
+				self.tabwin.insert('1.end', line1, 'highlight')
+				self.tabwin.insert('2.end', line2, 'highlight')
+			else:
+				self.tabwin.insert('1.end', line1)
+				self.tabwin.insert('2.end', line2)
+		self.tabwin.delete('3.0', tk.END)
+		self.tabwin.config(state='disabled')
+
+
+	def FocusReturn(self,event=None):
+		self.comwin.focus_set()
+
+
+	def PromptProtect(self, event=None):
+		cursor_position = self.comwin.index(tk.INSERT)
+		[cursor_line, cursor_column] = cursor_position.split('.')
+		if int(cursor_line) == 1:
+			if int(cursor_column) < 10:
+				self.comwin.delete('1.0', '1.10')
+				self.comwin.insert('1.0', 'TasKey >> ', 'prompt')
+
 
 	def DispRefresh(self):
 		self.BuildTabs()
@@ -420,119 +535,6 @@ class TasKeyUI:
 					self.listwin.insert(tk.END, buffer + F1 + '\n', F1tag)
 				else:
 					self.listwin.insert(tk.END, '\n')
-
-
-	def ASCII_Datetime(self):
-		ct = datetime.datetime.now()
-		hour = '{0:02.0f}'.format(ct.hour)
-		minute = '{0:02.0f}'.format(ct.minute)
-		weekdays = ['Mon', 'Tus', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
-		weekday = weekdays[ct.weekday()]
-		day = '{0:02.0f}'.format(ct.day)
-		month = '{0:02.0f}'.format(ct.month)
-
-		self.timewin.config(state='normal')
-		self.timewin.delete('1.0', tk.END)
-		ASCII_time = pyfiglet.figlet_format(hour + ':' + minute, font='smslant')
-		self.timewin.insert('1.0', ASCII_time, 'center')
-		self.timewin.delete('5.0', tk.END)
-		self.timewin.config(state='disabled')
-		
-		self.weekdaywin.config(state='normal')
-		self.weekdaywin.delete('1.0', tk.END)
-		ASCII_weekday = pyfiglet.figlet_format(weekday, font='smslant')
-		self.weekdaywin.insert('1.0', ASCII_weekday, 'center')
-		self.weekdaywin.delete('5.0', tk.END)
-		self.weekdaywin.config(state='disabled')
-
-		self.datewin.config(state='normal')
-		self.datewin.delete('1.0', tk.END)
-		ASCII_date = pyfiglet.figlet_format(month + '. ' + day, font='smslant')
-		self.datewin.insert('1.0', ASCII_date, 'center')
-		self.datewin.delete('5.0', tk.END)
-		self.datewin.config(state='disabled')
-
-		self.root.after(1000, self.ASCII_Datetime)
-
-
-	def ASCII_ProgressBar(self):
-
-		def BarColor(complete, of, barchar_length, bad, med):
-			precent = complete/of
-			no_bars = int(barchar_length * precent)
-			no_space = barchar_length - no_bars
-
-			rel_bad = int(barchar_length*bad)
-			rel_med = int(barchar_length*med)
-
-			bar = '/'*no_bars + '-'*no_space
-			for i in range(len(bar)):
-				char = bar[i]
-				if char == '/':
-					if i < rel_bad:
-						self.probarwin.insert(tk.END, char, 'bad')
-					elif i < rel_med:
-						self.probarwin.insert(tk.END, char, 'med')
-					else:
-						self.probarwin.insert(tk.END, char, 'good')
-				else:
-					self.probarwin.insert(tk.END, char)
-
-		[x,y,w,h] = self.root.grid_bbox(2, 1)
-		packaging_length = tkf.Font(font='Courier').measure('Critical Tasks [] 000.0%')
-		charwidth = tkf.Font(font='Courier').measure('/')
-		barchar_length = int((w - packaging_length)/charwidth - 1)
-
-		self.probarwin.config(state='normal')
-		self.probarwin.delete('1.0', tk.END)
-
-		critical = 5
-		critical_complete = 1
-		critical_precent = str(round((critical_complete/critical)*100, 1))
-		self.probarwin.insert('1.0', 'Critical Tasks [')
-		BarColor(critical_complete, critical, barchar_length, 0.5, 0.75)
-		self.probarwin.insert(tk.END, '] ' + critical_precent + '%' + '\n')
-
-		weekly = 10
-		weekly_complete = 5
-		weekly_precent = str(round((weekly_complete/weekly)*100, 1))
-		self.probarwin.insert('2.0', '  Weekly Tasks [')
-		BarColor(weekly_complete, weekly, barchar_length, 0.25, 0.5)
-		self.probarwin.insert(tk.END, '] ' + weekly_precent + '%' + '\n')
-
-		self.probarwin.delete('3.0', tk.END)
-		self.probarwin.config(state='disabled')
-		
-
-	def BuildTabs(self):
-		self.tabwin.config(state='normal')
-		self.tabwin.delete('1.0', tk.END)
-		self.tabwin.insert('1.0', '\n\n')
-		tabs = list(self.DBroster.keys())
-		for tab in tabs:
-			line1 = ' ' + '_'*len(tab) + ' '
-			line2 = '/' + tab + '\\'
-			if tab == self.current_tab:
-				self.tabwin.insert('1.end', line1, 'highlight')
-				self.tabwin.insert('2.end', line2, 'highlight')
-			else:
-				self.tabwin.insert('1.end', line1)
-				self.tabwin.insert('2.end', line2)
-		self.tabwin.delete('3.0', tk.END)
-		self.tabwin.config(state='disabled')
-
-
-	def FocusReturn(self,event=None):
-		self.comwin.focus_set()
-
-
-	def PromptProtect(self, event=None):
-		cursor_position = self.comwin.index(tk.INSERT)
-		[cursor_line, cursor_column] = cursor_position.split('.')
-		if int(cursor_line) == 1:
-			if int(cursor_column) < 10:
-				self.comwin.delete('1.0', '1.10')
-				self.comwin.insert('1.0', 'TasKey >> ', 'prompt')
 
 
 	def OnResize(self, event):

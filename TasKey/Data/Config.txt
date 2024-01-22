@@ -59,9 +59,4 @@ config = {
 	'low_period': 3,
 
 
-	## MISCELLANEOUS SETTINGS ## 
-
-	'tab_case_sensitivity': False, # case sensitivity when changing tabs
-	
-
 	}

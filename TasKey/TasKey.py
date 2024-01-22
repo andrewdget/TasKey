@@ -4,9 +4,8 @@ Required Fixes:
 1. inputting erroneous tab name results in frozen command line.
 2. need to improve input error handling so the program continues to work
 3. using "-" in task name, etc. causes issues
-4. check if days remaining fix, fixed issue with manual deadlines not
-	effecting priority score. 
-5. holding backspace may still delete prompt on windows machine
+4. holding backspace may still delete prompt on windows machine
+5. need to make date formats consistant with one another
 
 
 To-Do:
@@ -22,8 +21,7 @@ To-Do:
 
 Ideas:
 1. add ability to transfer tasks between tabs
-2. no deadline task
-3. 
+2. add a no deadline task
 '''
 
 ## DEPENDENCIES ## 
