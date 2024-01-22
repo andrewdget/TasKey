@@ -145,8 +145,8 @@ class ActiveTask:
 		author
 
 	-Generated:
-		hard_deadline - was the date manualy/automaticaly generated
-		created **located above deadline as is requiured for AutoDeadline()**
+		hard_deadline - was the date manually/automatically generated
+		created **located above deadline as is required for AutoDeadline()**
 		remaining - days remaining before deadline
 		score - priority score (lower is better)
 		alpha_index - double letter (i.e. "aa") index
@@ -207,7 +207,7 @@ class ActiveTask:
 		elif self.priority == 'low':
 			deadline = self.created + datetime.timedelta(weeks=self.config['low_period'])
 		elif self.priority == 'critical':
-			deadline = self.created # ritical tasks due the day of creation
+			deadline = self.created # critical tasks due the day of creation
 		return deadline
 
 
@@ -235,7 +235,7 @@ class ActiveTask:
 
 
 	def ScorePriority(self):
-		''' returns a "priority score" following a liniar function with a slope
+		''' returns a "priority score" following a linear function with a slope
 		of 1 and intercept set by priority '''
 		if self.priority == 'critical':
 			y_intercept = 0
@@ -263,14 +263,14 @@ class ActiveTask:
 class ArchiveTask:
 	''' DATA VARIABLES
 	-From "config":
-		modifier - who arhived (completed/deleted) the task
+		modifier - who archived (completed/deleted) the task
 	
 	-From "task": 
 		name
 		footnote - additional info/notes for the task
 		priority
 		deadline
-		hard_deadline - was the date manualy/automaticaly generated
+		hard_deadline - was the date manually/automatically generated
 		created
 		author
 
@@ -278,7 +278,7 @@ class ArchiveTask:
 		reason - why the task was archived
 	
 	-Generated:
-		occured - when the task was archived
+		occurred - when the task was archived
 		alpha_index - double letter (i.e. "aa") index
 	'''
 

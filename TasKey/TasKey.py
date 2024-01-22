@@ -1,7 +1,7 @@
 ## NOTES ##
 '''
 Required Fixes:
-1. inputing erronous tab name results in frozen command line.
+1. inputting erroneous tab name results in frozen command line.
 2. need to improve input error handling so the program continues to work
 3. using "-" in task name, etc. causes issues
 4. check if days remaining fix, fixed issue with manual deadlines not
@@ -18,7 +18,7 @@ To-Do:
 6. internal settings configuration, tab creation, etc.
 7. implement arrow key scrolling
 8. implement functioning progress bars
- 
+9. improve/clean up the ASCII_ProgressBar function
 
 Ideas:
 1. add ability to transfer tasks between tabs

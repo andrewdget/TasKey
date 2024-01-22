@@ -10,7 +10,7 @@
 
 def ComInt(input_string):
 	''' accepts an input string with multiple "flags" (i.e. "-a", "-b", etc.)
-	followed by an optional string atribute and outputs a dictionary of
+	followed by an optional string attribute and outputs a dictionary of
 	flag/attribute pairs ('command_pairs') '''
 	flagindex = []
 	command_pairs = {}
@@ -54,7 +54,7 @@ def ComValidation(command_pairs, required_pairs):
 			match = options.intersection(command_flags) # checks if any of the options are in command_flags list
 			if match: # this is all that is required for 'opt' attributes
 				match = list(match)[0] # convert back from set() data structure
-				if required_pairs[flag] == 'req': # use 'flag' here as 'match' is dilimited component of the 'required_pairs' dict
+				if required_pairs[flag] == 'req': # use 'flag' here as 'match' is delimited component of the 'required_pairs' dict
 					if command_pairs[match] == None:
 						valid = False
 				elif required_pairs[flag] == None:
@@ -80,7 +80,7 @@ def AlphaIndexer(input_index, reverse=False):
 	''' 
 	if reverse=False (default):
 		function returns a double character, alphabetical, index given a
-		numerical equivilant i.e. 1 = aa, 27 = ba, etc. 
+		numerical equivalent i.e. 1 = aa, 27 = ba, etc. 
 	if reverse=True:
 		function returns a numerical index given a double character,
 		alphabetical, index i.e. aa = 1, ba = 27, etc.

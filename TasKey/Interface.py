@@ -1,6 +1,6 @@
 ## NOTES ##
 '''
-1. Consider improving the ASCII_ProgressBar funciton
+
 '''
 
 ## DEPENDENCIES ## 
@@ -365,7 +365,7 @@ class TasKeyUI:
 
 
 	def AddBranch(self, string, config):
-		''' TKinter's build in text wrapping functionality was insufiencent when
+		''' TKinter's build in text wrapping functionality was insufficient when
 		trying to implement TasKey's task display scheme (based on unicode file
 		trees). This function allows for dynamic wrapping and inclusion of tree
 		elements.

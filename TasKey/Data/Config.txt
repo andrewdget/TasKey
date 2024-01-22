@@ -34,7 +34,7 @@ config = {
 	'view_status_color': 'mediumpurple2',
 
 	## REGULAR WORK DAY SETTINGS ##
-	# "True" indicates the associated weeday is a regular work day.
+	# "True" indicates the associated weekday is a regular work day.
 
 	'Mon': True,
 	'Tue': True,
@@ -52,10 +52,16 @@ config = {
 	# means a high priority task will be given a deadline 1 work week from its 
 	# date of creation.
 	# Note: Critical tasks, unless provided an explicit deadline, are
-	# automaticaly assigned a deadline of the same day as they are created.
+	# automatically assigned a deadline of the same day as they are created.
 
 	'high_period': 1,
 	'medium_period': 2,
 	'low_period': 3,
+
+
+	## MISCELLANEOUS SETTINGS ## 
+
+	'tab_case_sensitivity': False, # case sensitivity when changing tabs
+	
 
 	}
