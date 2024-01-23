@@ -1,11 +1,13 @@
 ## NOTES ##
 '''
 Required Fixes:
-1. inputting erroneous tab name results in frozen command line.
-2. need to improve input error handling so the program continues to work
-3. using "-" in task name, etc. causes issues
-4. holding backspace may still delete prompt on windows machine
-5. need to make date formats consistant with one another
+1. paths to shared folders load but do not save
+2. implement functioning progress bars
+3. inputting erroneous tab name results in frozen command line.
+4. need to improve input error handling so the program continues to work
+5. using "-" in task name, etc. causes issues
+6. holding backspace may still delete prompt on windows machine
+7. need to make date formats consistent with one another
 
 
 To-Do:
@@ -16,8 +18,12 @@ To-Do:
 5. implement a force-save function
 6. internal settings configuration, tab creation, etc.
 7. implement arrow key scrolling
-8. implement functioning progress bars
-9. improve/clean up the ASCII_ProgressBar function
+8. improve/clean up the ASCII_ProgressBar function
+9. add option for encrypting data
+10. add color change for past due tasks
+11. make not that shared folder locations on windows need to have paths
+	with "/"
+
 
 Ideas:
 1. add ability to transfer tasks between tabs

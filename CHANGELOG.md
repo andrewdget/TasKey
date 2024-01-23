@@ -7,6 +7,10 @@
 
 <li>Fixed bug where task days remaining (and thus task priority score/list
 order) would not update appropriatly.</li> 
+
+<li>Improved reset behavior of additional task information selection</li>
+
+
 </ul>
 
 

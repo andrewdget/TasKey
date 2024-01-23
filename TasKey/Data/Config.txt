@@ -31,7 +31,6 @@ config = {
 	'subtext_color': 'darkslategray',
 	'cursor_color': 'red3',
 	'prompt_color': 'red3',
-	'view_status_color': 'mediumpurple2',
 
 	## REGULAR WORK DAY SETTINGS ##
 	# "True" indicates the associated weekday is a regular work day.

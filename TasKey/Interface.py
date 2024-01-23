@@ -38,7 +38,6 @@ class TasKeyUI:
 		subtext_color = self.config['subtext_color']
 		cursor_color = self.config['cursor_color']
 		prompt_color = self.config['prompt_color']
-		view_status_color = self.config['view_status_color']
 
 
 		# UI state variables
@@ -130,7 +129,8 @@ class TasKeyUI:
 			width=120, borderwidth=0, highlightthickness=1,
 			highlightbackground=border_color, font='Courier', wrap=tk.WORD,
 			state='disabled')
-		self.listwin.tag_config('status', foreground=view_status_color)
+		self.listwin.tag_config('bar', foreground=highlight_color,
+			justify=tk.CENTER)
 		self.listwin.tag_config('accent', foreground=accent_color)
 		self.listwin.tag_config('subtext', foreground=subtext_color)
 		self.listwin.tag_config('highlight', foreground=highlight_color)
@@ -289,10 +289,8 @@ class TasKeyUI:
 
 		[x,y,w,h] = self.root.grid_bbox(0, 3, 2, 3)
 		charwidth = tkf.Font(font='Courier').measure('0')
-		buffer = tkf.Font(font='Courier').measure('  aa  //0000-00-00 [000]')
-		wraplen = int((w-buffer)/charwidth)
+		wraplen = int((w-24)/charwidth)
 		if self.current_win == 'Active':
-			self.listwin.insert('1.0', '//Main//\n', 'status')
 			for task in self.DBroster[self.current_tab].Active:
 				if task.alpha_index != self.current_sel:
 					config = {
@@ -385,7 +383,9 @@ class TasKeyUI:
 					self.AddBranch('Created on.......' +\
 						str(task.created), config)
 		else:
-			self.listwin.insert('1.0', '!!ARCHIVE!!\n', 'highlight')
+			barlen = math.floor(w/charwidth) - 13
+			barmsg = u'\u251c\u2500Archive' + u'\u2500'*barlen + u'\u2524\n'
+			self.listwin.insert('1.0', barmsg, 'bar')
 			for task in self.DBroster[self.current_tab].Archive:
 				if task.alpha_index != self.current_sel:
 					config = {
@@ -564,9 +564,10 @@ class TasKeyUI:
 				self.current_sel = command
 			elif target == 'win':
 				self.current_win = command
-				self.current_sel == None
+				self.current_sel = None
 			elif target == 'tab':
 				self.current_tab = command
+				self.current_sel = None
 			elif target == 'msg':
 				self.CommandMsg(command)
 			elif target == 'prune':
@@ -582,7 +583,7 @@ class TasKeyUI:
 
 	def CommandMsg(self, message):
 		self.command_msg = True
-		self.commandwin.delete('1.0', tk.END)
-		self.commandwin.insert('1.0', message, 'highlight')
-		self.commandwin.insert(tk.END, ' <press enter to continue>', 'prompt')
-		self.commandwin.config(state='disabled')
+		self.comwin.delete('1.0', tk.END)
+		self.comwin.insert('1.0', message, 'highlight')
+		self.comwin.insert(tk.END, ' <press enter to continue>', 'prompt')
+		self.comwin.config(state='disabled')
