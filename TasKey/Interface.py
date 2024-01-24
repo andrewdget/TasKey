@@ -305,6 +305,8 @@ class TasKeyUI:
 						'width': w,
 						'charwidth': charwidth
 						}
+					if task.remaining == 0:
+						config['F1tag'] = 'highlight'
 					self.AddBranch(task.name, config)
 					if task.footnote != None:
 						config = {
@@ -332,6 +334,8 @@ class TasKeyUI:
 						'width': w,
 						'charwidth': charwidth
 						}
+					if task.remaining == 0:
+						config['F1tag'] = 'highlight'
 					self.AddBranch(task.name, config)
 					config = {
 							'L1': u'      \u251c\u2500\u2500 ',

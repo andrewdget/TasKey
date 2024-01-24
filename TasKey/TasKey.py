@@ -14,13 +14,11 @@ To-Do:
 1. need to add validation function for "Paths.txt"/"Config.txt" files
 2. implement keyboard shortcut(s) functionality
 3. update application icon
-4. disable case sensitivity for tab names (make option in config)
 5. implement a force-save function
 6. internal settings configuration, tab creation, etc.
 7. implement arrow key scrolling
 8. improve/clean up the ASCII_ProgressBar function
 9. add option for encrypting data
-10. add color change for past due tasks
 11. make not that shared folder locations on windows need to have paths
 	with "/"
 
@@ -51,4 +49,4 @@ DBroster = BatchLoadDB(config, path_roster)
 UI = TasKeyUI(version, config, DBroster)
 
 DBroster = UI.DBroster
-BatchSafeSaveDB(DBroster)
+# BatchSafeSaveDB(DBroster)
