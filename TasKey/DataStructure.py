@@ -1,13 +1,12 @@
 ## NOTES ##
 '''
-1. note TasKey displays dates in diff format than expected Str2Date function 
-	date input format... will lead to confusion. Suggest finding fix. 
+
 '''
 
 ## DEPENDENCIES ## 
 
 import datetime
-from Utils import AlphaIndexer
+from Utils import AlphaIndexer, GetCurrentDate, Str2Date
 
 
 ## DEFINITIONS ##
@@ -133,6 +132,30 @@ class TaskDB:
 			self.Archive[i].alpha_index = AlphaIndexer(i)
 
 
+	def stats(self):
+		noworkdays = 0
+		for day in ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']:
+			if self.config[day]:
+				noworkdays += 1
+		threshold = GetCurrentDate() + datetime.timedelta(days=noworkdays)
+		
+		stats = {'total': 0, 'total_complete': 0, 'critical': 0,
+			'critical_complete': 0}
+		for task in self.Active:
+			if task.deadline <= threshold:
+				stats['total'] += 1
+				if task.priority == 'critical':
+					stats['critical'] += 1
+		for task in self.Archive:
+			if task.deadline <= threshold:
+				stats['total'] += 1
+				stats['total_complete'] += 1
+				if task.priority == 'critical':
+					stats['critical'] += 1
+					stats['critical_complete'] += 1
+		return stats
+
+
 class ActiveTask:
 	''' DATA VARIABLES
 	-Input:
@@ -162,40 +185,18 @@ class ActiveTask:
 		else:
 			self.priority = priority
 
-		self.created = self.GetCurrentDate()
+		self.created = GetCurrentDate()
 		if deadline == None:
 			self.deadline = self.AutoDeadline()
 			self.hard_deadline = False
 		else:
-			self.deadline = self.Str2Date(deadline)
+			self.deadline = Str2Date(deadline)
 			self.hard_deadline = True
 
 		self.author = self.config['username']
 		self.remaining = self.RegularWorkDayCounter()
 		self.score = self.ScorePriority()
 		self.alpha_index = None # this will be set later by external routines
-
-		
-	def GetCurrentDate(self):
-		''' returns current date in datetime format '''
-		full_datetime = datetime.datetime.now()
-		year = full_datetime.year
-		month = full_datetime.month
-		day = full_datetime.day
-		current_date = datetime.date(year, month, day)
-		return current_date
-
-
-	def Str2Date(self, date):
-		''' converts string date (mmddyyyy) into datetime format '''
-		if isinstance(date, datetime.date): # confirm date not already in datetime format
-			return date
-		else:
-			year = int(date[4:])
-			month = int(date[0:2])
-			day = int(date[2:4])
-			reformated_date = datetime.date(year, month, day)
-			return reformated_date
 
 
 	def AutoDeadline(self):
@@ -214,7 +215,7 @@ class ActiveTask:
 	def RegularWorkDayCounter(self):
 		''' returns the number of days between current date and deadline, 
 		counting only selected regular work days '''
-		today = self.GetCurrentDate()
+		today = GetCurrentDate()
 		regular_work_days = [
 			self.config['Mon'],
 			self.config['Tue'],
@@ -253,7 +254,7 @@ class ActiveTask:
 		''' updates deadline (if auto generated), days remaining, and priority
 		score. Used when task is edited or restored. '''
 		if self.hard_deadline:
-			self.deadline = self.Str2Date(self.deadline) # insures deadline in correct format
+			self.deadline = Str2Date(self.deadline) # insures deadline in correct format
 		else:
 			self.deadline = self.AutoDeadline()
 		self.remaining = self.RegularWorkDayCounter()
@@ -295,18 +296,8 @@ class ArchiveTask:
 
 		self.reason = reason
 		
-		self.occurred = self.GetCurrentDate()
+		self.occurred = GetCurrentDate()
 		self.alpha_index = None # this will be set later by external routines
-	
-
-	def GetCurrentDate(self):
-		''' returns current date in datetime format '''
-		full_datetime = datetime.datetime.now()
-		year = full_datetime.year
-		month = full_datetime.month
-		day = full_datetime.day
-		current_date = datetime.date(year, month, day)
-		return current_date
 
 
 ## EXECUTABLE ## 

@@ -10,6 +10,8 @@ order) would not update appropriatly.</li>
 
 <li>Improved reset behavior of additional task information selection</li>
 
+<li>Implemented functioning progress bars</li>
+
 
 </ul>
 

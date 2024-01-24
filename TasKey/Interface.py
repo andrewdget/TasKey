@@ -201,48 +201,46 @@ class TasKeyUI:
 
 	def ASCII_ProgressBar(self):
 
-		def BarColor(complete, of, barchar_length, bad, med):
-			precent = complete/of
-			no_bars = int(barchar_length * precent)
-			no_space = barchar_length - no_bars
-
-			rel_bad = int(barchar_length*bad)
-			rel_med = int(barchar_length*med)
-
-			bar = '/'*no_bars + '-'*no_space
+		def BarBuilder(precent_complete, barlen, precent_bad, precent_med):
+			numbars = int(barlen * precent_complete)
+			numspace = barlen - numbars
+			rel_bad = int(barlen*precent_bad)
+			rel_med = int(barlen*precent_med)
+			bar = '/'*numbars + '-'*numspace
 			for i in range(len(bar)):
 				char = bar[i]
-				if char == '/':
-					if i < rel_bad:
-						self.probarwin.insert(tk.END, char, 'bad')
-					elif i < rel_med:
-						self.probarwin.insert(tk.END, char, 'med')
-					else:
-						self.probarwin.insert(tk.END, char, 'good')
+				if i < rel_bad:
+					self.probarwin.insert(tk.END, char, 'bad')
+				elif i < rel_med:
+					self.probarwin.insert(tk.END, char, 'med')
 				else:
-					self.probarwin.insert(tk.END, char)
+					self.probarwin.insert(tk.END, char, 'good')
 
 		[x,y,w,h] = self.root.grid_bbox(2, 1)
-		packaging_length = tkf.Font(font='Courier').measure('Critical Tasks [] 000.0%')
-		charwidth = tkf.Font(font='Courier').measure('/')
-		barchar_length = int((w - packaging_length)/charwidth - 1)
+		charwidth = tkf.Font(font='Courier').measure('0')
+		barlen = int(w/charwidth - 27)
+		stats = self.DBroster[self.current_tab].stats()
 
 		self.probarwin.config(state='normal')
 		self.probarwin.delete('1.0', tk.END)
 
-		critical = 5
-		critical_complete = 1
-		critical_precent = str(round((critical_complete/critical)*100, 1))
-		self.probarwin.insert('1.0', 'Critical Tasks [')
-		BarColor(critical_complete, critical, barchar_length, 0.5, 0.75)
-		self.probarwin.insert(tk.END, '] ' + critical_precent + '%' + '\n')
+		critical = stats['critical']
+		critical_complete = stats['critical_complete']
+		try: critical_precent = critical_complete/critical
+		except: critical_precent = 1
+		self.probarwin.insert('1.0', '   Critical Tasks [')
+		BarBuilder(critical_precent, barlen, 0.5, 0.75)
+		self.probarwin.insert(tk.END, '] ' +\
+			'{0:3.0f}'.format(critical_precent*100) + '%' + '\n')
 
-		weekly = 10
-		weekly_complete = 5
-		weekly_precent = str(round((weekly_complete/weekly)*100, 1))
-		self.probarwin.insert('2.0', '  Weekly Tasks [')
-		BarColor(weekly_complete, weekly, barchar_length, 0.25, 0.5)
-		self.probarwin.insert(tk.END, '] ' + weekly_precent + '%' + '\n')
+		weekly = stats['total']
+		weekly_complete = stats['total_complete']
+		try: weekly_precent = weekly_complete/weekly
+		except: weekly_precent = 1
+		self.probarwin.insert('2.0', '   Upcoming Tasks [')
+		BarBuilder(weekly_precent, barlen, 0.25, 0.5)
+		self.probarwin.insert(tk.END, '] ' +\
+			'{0:3.0f}'.format(weekly_precent*100) + '%' + '\n')
 
 		self.probarwin.delete('3.0', tk.END)
 		self.probarwin.config(state='disabled')
@@ -281,6 +279,7 @@ class TasKeyUI:
 
 	def DispRefresh(self):
 		self.BuildTabs()
+		self.ASCII_ProgressBar()
 		self.DBroster[self.current_tab].refresh()
 		self.DBroster[self.current_tab].reindex()
 
@@ -563,15 +562,14 @@ class TasKeyUI:
 
 
 	def UICommandProcessor(self, target, command):
+		self.current_sel = None
 		if target != None:
 			if target == 'sel':
 				self.current_sel = command
 			elif target == 'win':
 				self.current_win = command
-				self.current_sel = None
 			elif target == 'tab':
 				self.current_tab = command
-				self.current_sel = None
 			elif target == 'msg':
 				self.CommandMsg(command)
 			elif target == 'prune':

@@ -4,6 +4,7 @@
 '''
 
 ## DEPENDENCIES ## 
+import datetime
 
 
 ## DEFINITIONS ##
@@ -100,5 +101,27 @@ def AlphaIndexer(input_index, reverse=False):
 				index2 = i
 		output_index = index1 + index2
 	return output_index
+
+
+def GetCurrentDate():
+	''' returns current date in datetime format '''
+	full_datetime = datetime.datetime.now()
+	year = full_datetime.year
+	month = full_datetime.month
+	day = full_datetime.day
+	current_date = datetime.date(year, month, day)
+	return current_date
+
+
+def Str2Date(date):
+	''' converts string date (mmddyyyy) into datetime format '''
+	if isinstance(date, datetime.date): # confirm date not already in datetime format
+		return date
+	else:
+		year = int(date[4:])
+		month = int(date[0:2])
+		day = int(date[2:4])
+		reformated_date = datetime.date(year, month, day)
+		return reformated_date
 
 ## EXECUTABLE ## 

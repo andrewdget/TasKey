@@ -1,6 +1,6 @@
 ## NOTES ##
 '''
-1. need to add feature that eliminates any bad (temp) saves
+
 '''
 
 ## DEPENDENCIES ## 

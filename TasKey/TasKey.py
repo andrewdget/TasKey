@@ -2,30 +2,25 @@
 '''
 Required Fixes:
 1. paths to shared folders load but do not save
-2. implement functioning progress bars
 3. inputting erroneous tab name results in frozen command line.
 4. need to improve input error handling so the program continues to work
 5. using "-" in task name, etc. causes issues
 6. holding backspace may still delete prompt on windows machine
-7. need to make date formats consistent with one another
 
 
 To-Do:
-1. need to add validation function for "Paths.txt"/"Config.txt" files
-2. implement keyboard shortcut(s) functionality
-3. update application icon
+1. note TasKey displays dates in diff format than expected Str2Date function 
+	date input format... will lead to confusion. Suggest finding fix. 
+2. need to add feature that eliminates any bad (temp) saves
+3. need to add validation function for "Paths.txt"/"Config.txt" files
+4. implement keyboard shortcut(s) functionality
 5. implement a force-save function
 6. internal settings configuration, tab creation, etc.
 7. implement arrow key scrolling
-8. improve/clean up the ASCII_ProgressBar function
-9. add option for encrypting data
-11. make not that shared folder locations on windows need to have paths
-	with "/"
-
-
-Ideas:
-1. add ability to transfer tasks between tabs
-2. add a no deadline task
+8. add option for encrypting data
+9. make not that shared folder locations on windows need to have paths with "/"
+10. add ability to transfer tasks between tabs
+11. add a no deadline task
 '''
 
 ## DEPENDENCIES ## 
