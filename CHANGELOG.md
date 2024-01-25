@@ -14,6 +14,8 @@ order) would not update appropriatly.</li>
 
 <li>Implemented better command input validation</li>
 
+<li>Fixed issue where the use of hiphens would incorreclty be interepreted as a flag, this only works if bounded by two words i.e. "high-profile".</li>
+
 </ul>
 
 

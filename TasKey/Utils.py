@@ -18,7 +18,8 @@ def ComInt(input_string):
 	nochars = len(input_string)
 	for i in range(nochars): # get index of flags
 		if input_string[i] == '-':
-			flagindex.append(i)
+			if i == 0 or input_string[i-1] == ' ':
+				flagindex.append(i)
 	noflag = len(flagindex)
 	for i in range(noflag): # get flags and attributes (if they exist)
 		flag = input_string[flagindex[i]:flagindex[i]+2]

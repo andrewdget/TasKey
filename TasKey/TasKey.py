@@ -1,7 +1,6 @@
 ## NOTES ##
 '''
 Required Fixes:
-3. using "-" in task name, etc. causes issues
 4. paths to shared folders load but do not seem to save
 5. holding backspace may still delete prompt on windows machine
 
@@ -42,4 +41,4 @@ DBroster = BatchLoadDB(config, path_roster)
 UI = TasKeyUI(version, config, DBroster)
 
 DBroster = UI.DBroster
-# BatchSafeSaveDB(DBroster)
+BatchSafeSaveDB(DBroster)
