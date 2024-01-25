@@ -12,6 +12,7 @@ order) would not update appropriatly.</li>
 
 <li>Implemented functioning progress bars</li>
 
+<li>Implemented better command input validation</li>
 
 </ul>
 

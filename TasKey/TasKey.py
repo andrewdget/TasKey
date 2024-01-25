@@ -1,11 +1,9 @@
 ## NOTES ##
 '''
 Required Fixes:
-1. paths to shared folders load but do not save
-3. inputting erroneous tab name results in frozen command line.
-4. need to improve input error handling so the program continues to work
-5. using "-" in task name, etc. causes issues
-6. holding backspace may still delete prompt on windows machine
+3. using "-" in task name, etc. causes issues
+4. paths to shared folders load but do not seem to save
+5. holding backspace may still delete prompt on windows machine
 
 
 To-Do:

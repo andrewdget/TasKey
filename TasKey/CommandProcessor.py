@@ -12,7 +12,7 @@ from Utils import *
 
 ## DEFINITIONS ##
 
-def ComPro(DB, input_str):
+def ComPro(DBroster, current_tab, input_str):
 	'''
 	DATABASE COMMANDS
 	-n new task
@@ -28,6 +28,7 @@ def ComPro(DB, input_str):
 	-t switch tabs
 	-k kill TasKey
 	'''
+	DB = DBroster[current_tab]
 	if len(input_str) > 0: # bypasses command processor if no input is given
 		command_pairs = ComInt(input_str)
 		if len(command_pairs.keys()) == 0:
@@ -39,7 +40,11 @@ def ComPro(DB, input_str):
 				required_pairs = {'-n': 'req'}
 				validation = ComValidation(command_pairs, required_pairs)
 				if validation:
-					DB.new(command_pairs)
+					try:
+						DB.new(command_pairs)
+					except:
+						target = 'msg'
+						command = 'ERROR: new task command contains invalid elements'
 				else:
 					target = 'msg'
 					command = 'ERROR: new task command missing elements'
@@ -48,7 +53,11 @@ def ComPro(DB, input_str):
 				required_pairs = {'-e': 'req', '-n/-f/-c/-h/-m/-l/-d': 'opt'}
 				validation = ComValidation(command_pairs, required_pairs)
 				if validation:
-					DB.edit(command_pairs)
+					try:
+						DB.edit(command_pairs)
+					except:
+						target = 'msg'
+						command = 'ERROR: edit task command contains invalid elements'
 				else:
 					target = 'msg'
 					command = 'ERROR: edit task command missing elements'
@@ -57,7 +66,11 @@ def ComPro(DB, input_str):
 				required_pairs = {'-c': 'req'}
 				validation = ComValidation(command_pairs, required_pairs)
 				if validation:
-					DB.complete(command_pairs)
+					try:
+						DB.complete(command_pairs)
+					except:
+						target = 'msg'
+						command = 'ERROR: complete task command contains an invalid index'
 				else:
 					target = 'msg'
 					command = 'ERROR: complete task command missing index'
@@ -66,7 +79,11 @@ def ComPro(DB, input_str):
 				required_pairs = {'-d': 'req'}
 				validation = ComValidation(command_pairs, required_pairs)
 				if validation:
-					DB.delete(command_pairs)
+					try:
+						DB.delete(command_pairs)
+					except:
+						target = 'msg'
+						command = 'ERROR: delete task command contains an invalid index'
 				else:
 					target = 'msg'
 					command = 'ERROR: delete task command missing index'
@@ -75,7 +92,11 @@ def ComPro(DB, input_str):
 				required_pairs = {'-r': 'req'}
 				validation = ComValidation(command_pairs, required_pairs)
 				if validation:
-					DB.restore(command_pairs)
+					try:
+						DB.restore(command_pairs)
+					except:
+						target = 'msg'
+						command = 'ERROR: restore task command contains an invalid index'
 				else:
 					target = 'msg'
 					command = 'ERROR: restore task command missing index'
@@ -84,8 +105,16 @@ def ComPro(DB, input_str):
 				required_pairs = {'-i': 'req'}
 				validation = ComValidation(command_pairs, required_pairs)
 				if validation:
-					target = 'sel'
-					command = command_pairs['-i']
+					index = command_pairs['-i']
+					if len(index) == 2 and index.islower() and index.isalpha():
+						target = 'sel'
+						command = index
+					elif index == 'None':
+						target = 'sel'
+						command = None
+					else:
+						target = 'msg'
+						command = 'ERROR: information command contains an invalid index'
 				else:
 					target = 'msg'
 					command = 'ERROR: information command missing index'
@@ -114,8 +143,12 @@ def ComPro(DB, input_str):
 				required_pairs = {'-t': 'req'}
 				validation = ComValidation(command_pairs, required_pairs)
 				if validation:
-					target = 'tab'
-					command = command_pairs['-t']
+					if command_pairs['-t'] in list(DBroster.keys()):
+						target = 'tab'
+						command = command_pairs['-t']
+					else:
+						target = 'msg'
+						command = 'ERROR: switch tab command provided invalid name of tab'
 				else:
 					target = 'msg'
 					command = 'ERROR: switch tab command missing name of tab'
@@ -137,7 +170,6 @@ def ComPro(DB, input_str):
 				else:
 					target = 'msg'
 					command = 'ERROR: kill command provided invalid elements'			
-
 			else:
 				target = 'msg'
 				command = 'ERROR: no valid flags given'
