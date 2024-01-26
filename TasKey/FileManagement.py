@@ -30,25 +30,6 @@ def GetFiles(name):
 				files.append(file)
 	return files
 
-def Prune(name, path, del_all=False):
-	rootdir = os.getcwd()
-	os.chdir(path)
-	files = GetFiles(name)
-	for i in range(len(files)):
-		if del_all:
-			os.remove(files[i])
-		else:
-			if i != 0:
-				os.remove(files[i])
-	os.chdir(rootdir)
-
-
-def BatchPrune(path_roster, del_all=False):
-	names = list(path_roster.keys())
-	for name in names:
-		path = path_roster[name]
-		Prune(name, path, del_all)
-
 
 def LoadDB(config, name, path):
 	rootdir = os.getcwd()
@@ -63,9 +44,18 @@ def LoadDB(config, name, path):
 	return DB
 
 
-def SafeSaveDB(DB):
+def BatchLoadDB(config, path_roster):
+	DBroster = {}
+	names = list(path_roster.keys())
+	for name in names:
+		path = path_roster[name]
+		DB = LoadDB(config, name, path)
+		DBroster[name] = DB
+	return DBroster
+
+
+def SafeSaveDB(DB, path):
 	name = DB.db_name
-	path = DB.path
 	rootdir = os.getcwd()
 
 	os.chdir(path)
@@ -106,23 +96,35 @@ def SafeSaveDB(DB):
 	return proceed
 
 
-def BatchLoadDB(config, path_roster):
-	DBroster = {}
-	names = list(path_roster.keys())
-	for name in names:
-		path = path_roster[name]
-		DB = LoadDB(config, name, path)
-		DBroster[name] = DB
-	return DBroster
-
-
-def BatchSafeSaveDB(DBroster):
+def BatchSafeSaveDB(DBroster, path_roster):
 	names = list(DBroster.keys())
 	for name in names:
 		DB = DBroster[name]
-		state = SafeSaveDB(DB)
+		path = path_roster[name]
+		state = SafeSaveDB(DB, path)
 		if state == False:
 			print('!! ERROR OCCURED DURING ATTEMPT TO SAVESTATE !!')
+
+
+def Prune(name, path, del_all=False):
+	rootdir = os.getcwd()
+	os.chdir(path)
+	files = GetFiles(name)
+	for i in range(len(files)):
+		if del_all:
+			os.remove(files[i])
+		else:
+			if i != 0:
+				os.remove(files[i])
+	os.chdir(rootdir)
+
+
+def BatchPrune(path_roster, del_all=False):
+	names = list(path_roster.keys())
+	for name in names:
+		path = path_roster[name]
+		Prune(name, path, del_all)
+
 
 def SavestateReset():
 	rootdir = os.getcwd()

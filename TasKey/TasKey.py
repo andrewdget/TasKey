@@ -1,23 +1,27 @@
 ## NOTES ##
 '''
-Required Fixes:
-4. paths to shared folders load but do not seem to save
-5. holding backspace may still delete prompt on windows machine
+Bugs/Required Fixes:
+- date display/entry inconsistent throughout program
+- implement better "catch" system for a failed safesave
+- progress bars are erroneously including deleted (opposed to completed) items
+- add feature which allows task to be completely deleted (from archive)
+- prompt protect doesn't function as well as desired, look at improving
 
 
 To-Do:
-1. note TasKey displays dates in diff format than expected Str2Date function 
-	date input format... will lead to confusion. Suggest finding fix. 
-2. need to add feature that eliminates any bad (temp) saves
-3. need to add validation function for "Paths.txt"/"Config.txt" files
-4. implement keyboard shortcut(s) functionality
-5. implement a force-save function
-6. internal settings configuration, tab creation, etc.
-7. implement arrow key scrolling
-8. add option for encrypting data
-9. make not that shared folder locations on windows need to have paths with "/"
-10. add ability to transfer tasks between tabs
-11. add a no deadline task
+- implement arrow-key scrolling
+- implement keyboard shortcut functionality (for calling application)
+- implement save function (that doesn't require application to be closed/killed)
+- make note that shared folder locations on windows need to have paths with "/"
+- add ability to transfer tasks between tabs
+- add a no deadline task
+
+Future Features:
+- add option for encrypting data
+- internal settings configuration
+- internal tab creation
+- add function for transferring tasks between tabs
+
 '''
 
 ## DEPENDENCIES ## 
@@ -38,7 +42,7 @@ exec(open('./Data/Config.txt').read())
 
 DBroster = BatchLoadDB(config, path_roster)
 
-UI = TasKeyUI(version, config, DBroster)
+UI = TasKeyUI(version, config, DBroster, path_roster)
 
 DBroster = UI.DBroster
-BatchSafeSaveDB(DBroster)
+BatchSafeSaveDB(DBroster, path_roster)

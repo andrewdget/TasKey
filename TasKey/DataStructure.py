@@ -12,10 +12,9 @@ from Utils import AlphaIndexer, GetCurrentDate, Str2Date
 ## DEFINITIONS ##
 
 class TaskDB:
-	def __init__(self, config, db_name, path, Active=None, Archive=None):
+	def __init__(self, config, db_name, Active=None, Archive=None):
 		self.config = config
 		self.db_name = db_name
-		self.path = path
 		
 		if Active == None:
 			self.Active = []

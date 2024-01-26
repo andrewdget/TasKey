@@ -17,10 +17,11 @@ from FileManagement import BatchPrune
 ## DEFINITIONS ##
 
 class TasKeyUI:
-	def __init__(self, version, config, DBroster):
+	def __init__(self, version, config, DBroster, path_roster):
 
 		self.config = config
 		self.DBroster = DBroster
+		self.path_roster = path_roster
 
 
 		background_color = self.config['background_color']
@@ -573,10 +574,7 @@ class TasKeyUI:
 			elif target == 'msg':
 				self.CommandMsg(command)
 			elif target == 'prune':
-				path_roster = {}
-				for name in list(self.DBroster.keys()):
-					path_roster[name] = self.DBroster[name].path
-				BatchPrune(path_roster, del_all=False)
+				BatchPrune(self.path_roster, del_all=False)
 			elif target == 'kill':
 				self.root.destroy()				
 				return self.DBroster
