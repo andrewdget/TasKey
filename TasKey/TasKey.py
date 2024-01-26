@@ -1,7 +1,7 @@
 ## NOTES ##
 '''
 Bugs/Required Fixes:
-- progress bars are erroneously including deleted (opposed to completed) items
+- validation of date input is incomplete, sometimes results in strings
 - add feature which allows task to be completely deleted (from archive)
 - prompt protect doesn't function as well as desired, look at improving
 

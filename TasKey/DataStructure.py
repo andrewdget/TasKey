@@ -147,11 +147,12 @@ class TaskDB:
 					stats['critical'] += 1
 		for task in self.Archive:
 			if task.deadline <= threshold:
-				stats['total'] += 1
-				stats['total_complete'] += 1
-				if task.priority == 'critical':
-					stats['critical'] += 1
-					stats['critical_complete'] += 1
+				if task.reason == 'completed':
+					stats['total'] += 1
+					stats['total_complete'] += 1
+					if task.priority == 'critical':
+						stats['critical'] += 1
+						stats['critical_complete'] += 1
 		return stats
 
 
