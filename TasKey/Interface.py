@@ -296,8 +296,8 @@ class TasKeyUI:
 					config = {
 						'L1': '  ' + task.alpha_index + '  ',
 						'L2': '      ',
-						'F1': ' //' + str(task.deadline) + ' [' +\
-							'{0:03.0f}'.format(task.remaining) + ']',
+						'F1': ' //' + str(task.deadline.strftime('%m-%d-%Y')) +\
+							' [' + '{0:03.0f}'.format(task.remaining) + ']',
 						'L1tag': 'accent',
 						'F1tag': 'subtext',
 						'tag': None,
@@ -325,8 +325,8 @@ class TasKeyUI:
 					config = {
 						'L1': '  ' + task.alpha_index + '  ',
 						'L2': '      ',
-						'F1': ' //' + str(task.deadline) + ' [' +\
-							'{0:03.0f}'.format(task.remaining) + ']',
+						'F1': ' //' + str(task.deadline.strftime('%m-%d-%Y')) +\
+							' [' + '{0:03.0f}'.format(task.remaining) + ']',
 						'L1tag': 'highlight',
 						'F1tag': 'subtext',
 						'tag': 'accent',
@@ -366,10 +366,12 @@ class TasKeyUI:
 						str(task.score), config)
 					if not task.hard_deadline:
 						self.AddBranch('Deadline.........' +\
-							str(task.deadline) + '(Auto)', config)
+							str(task.deadline.strftime('%m-%d-%Y')) +\
+							'(Auto)', config)
 					else:
 						self.AddBranch('Deadline.........' +\
-							str(task.deadline) + '(Manual)', config)
+							str(task.deadline.strftime('%m-%d-%Y')) +\
+							'(Manual)', config)
 					self.AddBranch('Days Remaining...' +\
 						str(task.remaining), config)
 					self.AddBranch('Created By.......' + task.author, config)
@@ -385,7 +387,7 @@ class TasKeyUI:
 						'charwidth': charwidth
 						}
 					self.AddBranch('Created on.......' +\
-						str(task.created), config)
+						str(task.created.strftime('%m-%d-%Y')), config)
 		else:
 			barlen = math.floor(w/charwidth) - 13
 			barmsg = u'\u251c\u2500Archive' + u'\u2500'*barlen + u'\u2524\n'
@@ -395,7 +397,7 @@ class TasKeyUI:
 					config = {
 						'L1': '  ' + task.alpha_index + '  ',
 						'L2': '      ',
-						'F1': ' //' + str(task.occurred),
+						'F1': ' //' + str(task.occurred.strftime('%m-%d-%Y')),
 						'L1tag': 'accent',
 						'F1tag': 'subtext',
 						'tag': None,
@@ -421,7 +423,7 @@ class TasKeyUI:
 					config = {
 						'L1': '  ' + task.alpha_index + '  ',
 						'L2': '      ',
-						'F1': ' //' + str(task.occurred),
+						'F1': ' //' + str(task.occurred.strftime('%m-%d-%Y')),
 						'L1tag': 'highlight',
 						'F1tag': 'subtext',
 						'tag': 'accent',
@@ -441,7 +443,7 @@ class TasKeyUI:
 							'width': w,
 							'charwidth': charwidth
 							}
-					self.AddBranch('Footnote: ' + task.footnote, config)
+					self.AddBranch('Footnote: ' + str(task.footnote), config)
 					self.listwin.insert(tk.END, u'      \u2502\n', 'subtext')
 					config = {
 						'L1': u'      \u251c\u2500\u2500 ',
@@ -457,17 +459,19 @@ class TasKeyUI:
 					self.AddBranch('Priority.........' + task.priority, config)
 					if not task.hard_deadline:
 						self.AddBranch('Deadline.........' +\
-							str(task.deadline) + '(Auto)', config)
+							str(task.deadline.strftime('%m-%d-%Y')) +\
+							'(Auto)', config)
 					else:
 						self.AddBranch('Deadline.........' +\
-							str(task.deadline) + '(Manual)', config)
+							str(task.deadline.strftime('%m-%d-%Y')) +\
+							'(Manual)', config)
 					self.AddBranch('Created By.......' + task.author, config)
 					self.AddBranch('Created on.......' +\
-						str(task.created), config)
+						str(task.created.strftime('%m-%d-%Y')), config)
 					self.AddBranch('Modified By......' +\
 						task.modifier, config)
 					self.AddBranch('Modified on......' +\
-						str(task.occurred), config)
+						str(task.occurred.strftime('%m-%d-%Y')), config)
 					config = {
 						'L1': u'      \u2514\u2500\u2500 ',
 						'L2': '          ',

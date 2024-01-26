@@ -110,8 +110,8 @@ def ComPro(DBroster, current_tab, input_str):
 						DB.new(command_pairs)
 					except:
 						target = 'msg'
-						command = 'ERROR: new task command contains invalid\
-							elements'
+						command = 'ERROR: new task command contains invalid'\
+							' elements'
 				else:
 					target = 'msg'
 					command = 'ERROR: new task command missing elements'
@@ -124,8 +124,8 @@ def ComPro(DBroster, current_tab, input_str):
 						DB.edit(command_pairs)
 					except:
 						target = 'msg'
-						command = 'ERROR: edit task command contains invalid\
-							elements'
+						command = 'ERROR: edit task command contains invalid'\
+							' elements'
 				else:
 					target = 'msg'
 					command = 'ERROR: edit task command missing elements'
@@ -138,8 +138,8 @@ def ComPro(DBroster, current_tab, input_str):
 						DB.complete(command_pairs)
 					except:
 						target = 'msg'
-						command = 'ERROR: complete task command contains an\
-							invalid index'
+						command = 'ERROR: complete task command contains an'\
+							' invalid index'
 				else:
 					target = 'msg'
 					command = 'ERROR: complete task command missing index'
@@ -152,8 +152,8 @@ def ComPro(DBroster, current_tab, input_str):
 						DB.delete(command_pairs)
 					except:
 						target = 'msg'
-						command = 'ERROR: delete task command contains an\
-							invalid index'
+						command = 'ERROR: delete task command contains an'\
+						' invalid index'
 				else:
 					target = 'msg'
 					command = 'ERROR: delete task command missing index'
@@ -166,8 +166,8 @@ def ComPro(DBroster, current_tab, input_str):
 						DB.restore(command_pairs)
 					except:
 						target = 'msg'
-						command = 'ERROR: restore task command contains an\
-							invalid index'
+						command = 'ERROR: restore task command contains an'\
+						' invalid index'
 				else:
 					target = 'msg'
 					command = 'ERROR: restore task command missing index'
@@ -185,8 +185,8 @@ def ComPro(DBroster, current_tab, input_str):
 						command = None
 					else:
 						target = 'msg'
-						command = 'ERROR: information command contains an\
-							invalid index'
+						command = 'ERROR: information command contains an'\
+							' invalid index'
 				else:
 					target = 'msg'
 					command = 'ERROR: information command missing index'
@@ -199,8 +199,8 @@ def ComPro(DBroster, current_tab, input_str):
 					command = 'Active'
 				else:
 					target = 'msg'
-					command = 'ERROR: switch to main command provided invalid\
-						elements'
+					command = 'ERROR: switch to main command provided invalid'\
+						' elements'
 
 			elif leader == '-a':
 				required_pairs = {'-a': None}
@@ -210,8 +210,8 @@ def ComPro(DBroster, current_tab, input_str):
 					command = 'Archive'
 				else:
 					target = 'msg'
-					command = 'ERROR: switch to archive command provided\
-						invalid elements'	
+					command = 'ERROR: switch to archive command provided'\
+						' invalid elements'	
 
 			elif leader == '-t':
 				required_pairs = {'-t': 'req'}
@@ -222,8 +222,8 @@ def ComPro(DBroster, current_tab, input_str):
 						command = command_pairs['-t']
 					else:
 						target = 'msg'
-						command = 'ERROR: switch tab command provided invalid\
-							name of tab'
+						command = 'ERROR: switch tab command provided invalid'\
+							' name of tab'
 				else:
 					target = 'msg'
 					command = 'ERROR: switch tab command missing name of tab'
