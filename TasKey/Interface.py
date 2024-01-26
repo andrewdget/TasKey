@@ -288,7 +288,7 @@ class TasKeyUI:
 
 		[x,y,w,h] = self.root.grid_bbox(0, 3, 2, 3)
 		charwidth = tkf.Font(font='Courier').measure('0')
-		wraplen = int((w-24)/charwidth)
+		wraplen = int(w/charwidth) - 24
 		if self.current_win == 'Active':
 			for task in self.DBroster[self.current_tab].Active:
 				if task.alpha_index != self.current_sel:
