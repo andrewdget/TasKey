@@ -24,7 +24,7 @@ def ComInt(input_string):
 	for i in range(noflag): # get flags and attributes (if they exist)
 		flag = input_string[flagindex[i]:flagindex[i]+2]
 		if i == noflag-1: # if last flag/at end of input string
-			attribute = input_string[flagindex[i]+3:nochars] # !! Not sure why 'nochars-1' cuts off last char...
+			attribute = input_string[flagindex[i]+3:nochars]
 		else:
 			attribute = input_string[flagindex[i]+3:flagindex[i+1]-1]
 		if attribute == '':
@@ -53,10 +53,10 @@ def ComValidation(command_pairs, required_pairs):
 	for flag in required_flags:
 		if '/' in flag:
 			options = set(flag.split('/'))
-			match = options.intersection(command_flags) # checks if any of the options are in command_flags list
-			if match: # this is all that is required for 'opt' attributes
-				match = list(match)[0] # convert back from set() data structure
-				if required_pairs[flag] == 'req': # use 'flag' here as 'match' is delimited component of the 'required_pairs' dict
+			match = options.intersection(command_flags)
+			if match: 
+				match = list(match)[0]
+				if required_pairs[flag] == 'req':
 					if command_pairs[match] == None:
 						valid = False
 				elif required_pairs[flag] == None:
@@ -110,7 +110,8 @@ def ComPro(DBroster, current_tab, input_str):
 						DB.new(command_pairs)
 					except:
 						target = 'msg'
-						command = 'ERROR: new task command contains invalid elements'
+						command = 'ERROR: new task command contains invalid\
+							elements'
 				else:
 					target = 'msg'
 					command = 'ERROR: new task command missing elements'
@@ -123,7 +124,8 @@ def ComPro(DBroster, current_tab, input_str):
 						DB.edit(command_pairs)
 					except:
 						target = 'msg'
-						command = 'ERROR: edit task command contains invalid elements'
+						command = 'ERROR: edit task command contains invalid\
+							elements'
 				else:
 					target = 'msg'
 					command = 'ERROR: edit task command missing elements'
@@ -136,7 +138,8 @@ def ComPro(DBroster, current_tab, input_str):
 						DB.complete(command_pairs)
 					except:
 						target = 'msg'
-						command = 'ERROR: complete task command contains an invalid index'
+						command = 'ERROR: complete task command contains an\
+							invalid index'
 				else:
 					target = 'msg'
 					command = 'ERROR: complete task command missing index'
@@ -149,7 +152,8 @@ def ComPro(DBroster, current_tab, input_str):
 						DB.delete(command_pairs)
 					except:
 						target = 'msg'
-						command = 'ERROR: delete task command contains an invalid index'
+						command = 'ERROR: delete task command contains an\
+							invalid index'
 				else:
 					target = 'msg'
 					command = 'ERROR: delete task command missing index'
@@ -162,7 +166,8 @@ def ComPro(DBroster, current_tab, input_str):
 						DB.restore(command_pairs)
 					except:
 						target = 'msg'
-						command = 'ERROR: restore task command contains an invalid index'
+						command = 'ERROR: restore task command contains an\
+							invalid index'
 				else:
 					target = 'msg'
 					command = 'ERROR: restore task command missing index'
@@ -180,7 +185,8 @@ def ComPro(DBroster, current_tab, input_str):
 						command = None
 					else:
 						target = 'msg'
-						command = 'ERROR: information command contains an invalid index'
+						command = 'ERROR: information command contains an\
+							invalid index'
 				else:
 					target = 'msg'
 					command = 'ERROR: information command missing index'
@@ -193,7 +199,8 @@ def ComPro(DBroster, current_tab, input_str):
 					command = 'Active'
 				else:
 					target = 'msg'
-					command = 'ERROR: switch to main command provided invalid elements'
+					command = 'ERROR: switch to main command provided invalid\
+						elements'
 
 			elif leader == '-a':
 				required_pairs = {'-a': None}
@@ -203,7 +210,8 @@ def ComPro(DBroster, current_tab, input_str):
 					command = 'Archive'
 				else:
 					target = 'msg'
-					command = 'ERROR: switch to archive command provided invalid elements'	
+					command = 'ERROR: switch to archive command provided\
+						invalid elements'	
 
 			elif leader == '-t':
 				required_pairs = {'-t': 'req'}
@@ -214,7 +222,8 @@ def ComPro(DBroster, current_tab, input_str):
 						command = command_pairs['-t']
 					else:
 						target = 'msg'
-						command = 'ERROR: switch tab command provided invalid name of tab'
+						command = 'ERROR: switch tab command provided invalid\
+							name of tab'
 				else:
 					target = 'msg'
 					command = 'ERROR: switch tab command missing name of tab'
@@ -259,7 +268,8 @@ def AlphaIndexer(input_index, reverse=False):
 	'''
 	ABC = 'abcdefghijklmnopqrstuvwxyz'
 	if reverse == False:
-		char1 = int((input_index+1)/26.01) # .01 insures char1 increases after 26, rather than at 26
+		# ".01" insures char1 increases after 26, rather than at 26
+		char1 = int((input_index+1)/26.01)
 		char2 = ((input_index+1) % 26) - 1
 		output_index = ABC[char1] + ABC[char2]
 	elif reverse == True:
@@ -286,7 +296,7 @@ def GetCurrentDate():
 
 def Str2Date(date):
 	''' converts string date (mmddyyyy) into datetime format '''
-	if isinstance(date, datetime.date): # confirm date not already in datetime format
+	if isinstance(date, datetime.date): # confirm not already in datetime format
 		return date
 	else:
 		year = int(date[4:])

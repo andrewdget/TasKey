@@ -121,7 +121,7 @@ class TaskDB:
 
 
 	def reindex(self):
-		self.Active.sort(key=lambda x: x.created) # done first to insure tasks w/ same score, oldest appear first
+		self.Active.sort(key=lambda x: x.created)
 		self.Active.sort(key=lambda x: x.score)
 		for i in range(len(self.Active)):
 			self.Active[i].alpha_index = AlphaIndexer(i)

@@ -2,11 +2,9 @@
 '''
 Bugs/Required Fixes:
 - date display/entry inconsistent throughout program
-- implement better "catch" system for a failed safesave
 - progress bars are erroneously including deleted (opposed to completed) items
 - add feature which allows task to be completely deleted (from archive)
 - prompt protect doesn't function as well as desired, look at improving
-
 
 To-Do:
 - implement arrow-key scrolling
@@ -19,6 +17,7 @@ To-Do:
 Future Features:
 - add option for encrypting data
 - internal settings configuration
+- implement better "catch" system for a failed safesave
 - internal tab creation
 - add function for transferring tasks between tabs
 
