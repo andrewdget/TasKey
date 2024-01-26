@@ -11,7 +11,7 @@ import pyfiglet
 import datetime
 import math
 
-from CommandProcessor import *
+from Utils import ComPro
 from FileManagement import BatchPrune
 
 ## DEFINITIONS ##
