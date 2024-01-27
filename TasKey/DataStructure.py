@@ -38,12 +38,15 @@ class TaskDB:
 		for flag in flags:
 			attribute = command_pairs[flag]
 			if flag == '-n':
+				assert attribute != None
 				name = attribute
 			elif flag == '-f':
+				assert attribute != None
 				footnote = attribute
 			elif flag in list(priorities.keys()):
 				priority = priorities[flag]
 			elif flag == '-d':
+				assert attribute != None
 				deadline = attribute
 
 			if 'footnote' not in locals():
