@@ -1,21 +1,28 @@
 # Change Log
 
-## alpha2 (Jan, xx, 2024)
+## alpha2 (Feb, xx, 2024)
 
+Changes:
 <ul>
-<li>Major UI Redesign</li>
+	<li>Complete overhaul of user interface - cleaner, easier to read, maximizes screen space, and vast improvement to availability of "at a glance" information.</li>
+	<li>Implemented functioning progress bars.</li>
+	<li>Various housekeeping:
+		<ul>
+			<li>Renamed "src" directory to "TasKey" for readability as there is no current intent to add TasKey to package index.</li>
+			<li>Moved common functions from DataStructure.py and CommandProcessor.py to Utils.py for simplicity.</li>
+			<li>Cleaned up long (over 80 char) inline comments, corrected spelling errors, reordered/grouped related functions, etc.</li>
+		</ul>
+	</li>
+</ul>
 
-<li>Fixed bug where task days remaining (and thus task priority score/list
-order) would not update appropriatly.</li> 
-
-<li>Improved reset behavior of additional task information selection</li>
-
-<li>Implemented functioning progress bars</li>
-
-<li>Implemented better command input validation</li>
-
-<li>Fixed issue where the use of hiphens would incorreclty be interepreted as a flag, this only works if bounded by two words i.e. "high-profile".</li>
-
+Bug Fixes:
+<ul>
+	<li>Resolved issue that prevented the number of working days remaining to
+		complete a task from updating correctly (also preventing priority score and list order from updating).</li>
+	<li>Implemented better command input validation and error message handling, preventing application breaking additions to task database.</li>
+	<li>Resolved issue where the use of hyphens in task name or footnote would incorrectly be interpreted as a flag. Hyphens are now tolerated, but only if bounded by two words without a space i.e. "high-profile".</li>
+	<li>Date display format now consistent with date input format</li>
+	<li>Resolved issue that prevented the updating of save location once a database was created.</li>
 </ul>
 
 
