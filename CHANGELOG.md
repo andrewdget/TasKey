@@ -6,6 +6,8 @@ Changes:
 <ul>
 	<li>Complete overhaul of user interface - cleaner, easier to read, maximizes screen space, and vast improvement to availability of "at a glance" information.</li>
 	<li>Implemented functioning progress bars.</li>
+	<li>Implemented feature which allows tasks to be "hard" deleted 
+	(accessible from the Archive view).</li>
 	<li>Various housekeeping:
 		<ul>
 			<li>Renamed "src" directory to "TasKey" for readability as there is no current intent to add TasKey to package index.</li>

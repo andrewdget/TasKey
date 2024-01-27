@@ -4,11 +4,9 @@
 	slashes
 
 Bugs/Required Fixes:
-- add feature which allows task to be completely deleted (from archive)
 
 To-Do:
 - implement arrow-key scrolling
-- implement keyboard shortcut functionality (for calling application)
 - implement save function (that doesn't require application to be closed/killed)
 
 
@@ -18,6 +16,7 @@ Future Features:
 - implement better "catch" system for a failed safesave
 - internal tab creation
 - add function for transferring tasks between tabs
+- implement keyboard shortcut functionality (for calling application)
 
 '''
 

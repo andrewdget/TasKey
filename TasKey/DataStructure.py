@@ -101,6 +101,11 @@ class TaskDB:
 		del self.Active[index]
 
 
+	def hard_delete(self, command_pairs):
+		index = AlphaIndexer(command_pairs['-d'], reverse=True)
+		del self.Archive[index]
+
+
 	def restore(self, command_pairs):
 		index = AlphaIndexer(command_pairs['-r'], reverse=True)
 		name = self.Archive[index].name

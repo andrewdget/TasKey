@@ -555,7 +555,7 @@ class TasKeyUI:
 		if self.command_msg == False:
 			com_input = self.comwin.get('1.10', tk.END).strip()
 			[target, command] = ComPro(self.DBroster, self.current_tab,
-				com_input)
+				self.current_win, com_input)
 			self.comwin.delete('1.10', tk.END)
 			self.UICommandProcessor(target, command)
 		else:

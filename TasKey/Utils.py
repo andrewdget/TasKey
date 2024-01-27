@@ -78,7 +78,7 @@ def ComValidation(command_pairs, required_pairs):
 	return valid
 
 
-def ComPro(DBroster, current_tab, input_str):
+def ComPro(DBroster, current_tab, current_win, input_str):
 	'''
 	DATABASE COMMANDS
 	-n new task
@@ -149,7 +149,10 @@ def ComPro(DBroster, current_tab, input_str):
 				validation = ComValidation(command_pairs, required_pairs)
 				if validation:
 					try:
-						DB.delete(command_pairs)
+						if current_win == 'Archive':
+							DB.hard_delete(command_pairs)
+						else:
+							DB.delete(command_pairs)
 					except:
 						target = 'msg'
 						command = 'ERROR: delete task command contains an'\
