@@ -36,7 +36,7 @@ def LoadDB(config, name, path):
 	os.chdir(path)
 	files = GetFiles(name)
 	if len(files) == 0:
-		DB = TaskDB(config, name, path)
+		DB = TaskDB(config, name)
 	else:
 		with open(files[0], 'rb') as f:
 			DB = pickle.load(f)
