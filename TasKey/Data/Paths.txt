@@ -10,4 +10,7 @@ any form of validation. Modify and/or add with caution.'''
 
 path_roster = {
    'Main': './Data/Savestates',
+   'DevOps': './Data/Savestates',
+   'DevOps-Shared': './Data/Savestates',
+   'Personal': './Data/Savestates',
 	}
