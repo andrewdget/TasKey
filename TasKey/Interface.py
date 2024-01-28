@@ -162,7 +162,8 @@ class TasKeyUI:
 		self.comwin.bind('<FocusOut>', self.FocusReturn)
 		self.comwin.bind('<KeyRelease>', self.PromptProtect)
 		self.comwin.bind('<Return>', self.CommandReturn)
-
+		self.comwin.bind('<Up>', self.ScrollControl)
+		self.comwin.bind('<Down>', self.ScrollControl)
 
 		self.root.mainloop()
 
@@ -563,6 +564,14 @@ class TasKeyUI:
 			self.comwin.delete('1.0', tk.END)
 			self.comwin.insert('1.0', 'TasKey >> ', 'prompt') 
 			self.command_msg = False
+		return 'break'
+
+
+	def ScrollControl(self, event):
+		if event.keysym == 'Up':
+			self.listwin.yview(tk.SCROLL, -1, tk.UNITS)
+		elif event.keysym == 'Down':
+			self.listwin.yview(tk.SCROLL, 1, tk.UNITS)
 		return 'break'
 
 

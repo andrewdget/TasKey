@@ -6,7 +6,6 @@
 Bugs/Required Fixes:
 
 To-Do:
-- implement arrow-key scrolling
 - implement save function (that doesn't require application to be closed/killed)
 
 
