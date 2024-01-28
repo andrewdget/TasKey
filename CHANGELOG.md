@@ -9,6 +9,7 @@
 			<li>Implemented feature which allows tasks to be "hard" deleted 
 			(accessible from the Archive view).</li>
 			<li>Implemented arrow-key scrolling.</li>
+			<li>Implemented manual database save function.</li>
 		</ul>
 	</li>
 	<br><li>Bug Fixes:

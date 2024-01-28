@@ -12,7 +12,7 @@ import datetime
 import math
 
 from Utils import ComPro
-from FileManagement import BatchPrune
+from FileManagement import BatchPrune, BatchSafeSaveDB
 
 ## DEFINITIONS ##
 
@@ -586,6 +586,8 @@ class TasKeyUI:
 				self.current_tab = command
 			elif target == 'msg':
 				self.CommandMsg(command)
+			elif target == 'save':
+				BatchSafeSaveDB(self.DBroster, self.path_roster)
 			elif target == 'prune':
 				BatchPrune(self.path_roster, del_all=False)
 			elif target == 'kill':

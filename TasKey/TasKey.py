@@ -6,8 +6,6 @@
 Bugs/Required Fixes:
 
 To-Do:
-- implement save function (that doesn't require application to be closed/killed)
-
 
 Future Features:
 - add option for encrypting data

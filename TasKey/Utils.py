@@ -231,6 +231,15 @@ def ComPro(DBroster, current_tab, current_win, input_str):
 					target = 'msg'
 					command = 'ERROR: switch tab command missing name of tab'
 
+			elif leader == '-s':
+				required_pairs = {'-s': None}
+				validation = ComValidation(command_pairs, required_pairs)
+				if validation:
+					target = 'save'
+				else:
+					target = 'msg'
+					command = 'ERROR: save command provided invalid elements'
+
 			elif leader == '-p':
 				required_pairs = {'-p': None}
 				validation = ComValidation(command_pairs, required_pairs)
