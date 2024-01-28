@@ -18,7 +18,7 @@
 				complete a task from updating correctly (also preventing priority score and list order from updating).</li>
 			<li>Implemented better command input validation and error message handling, preventing application breaking additions to task database.</li>
 			<li>Resolved issue where the use of hyphens in task name or footnote would incorrectly be interpreted as a flag. Hyphens are now tolerated, but only if bounded by two words without a space i.e. "high-profile".</li>
-			<li>Date display format now consistent with date input format</li>
+			<li>Date display format now consistent with date input format.</li>
 			<li>Resolved issue that prevented the updating of save location once a database was created.</li>
 		</ul>
 	</li>
