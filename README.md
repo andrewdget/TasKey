@@ -1,3 +1,7 @@
+1. Add note about how progress bar precentages are calculated.
+2. Add note about keyboard scrolling. 
+3. Add note about windows/shared save location forward slashes. 
+
 # TasKey
 
 v0.0.0 (XX Feb, 2024)
@@ -10,7 +14,7 @@ v0.0.0 (XX Feb, 2024)
 	<li><a href="url">Introduction</a></li>
 	<li><a href="url">Instillation</a></li>
 	<li><a href="url">Getting Started</a></li>
-	<li><a href="url">Usage
+	<li><a href="url">Usage/Command Line Syntax
 		<ol>
 			<li><a href="url">Creating a Task</a></li>
 			<li><a href="url">Viewing Task Information</a></li>
@@ -49,8 +53,73 @@ For these reasons, TasKey uses:
  <br>
  <p align='center'>
 	<img src='./Resources/TasKey_Example.jpg', alt='Example of TasKey Interface' width='850' height='auto'>
-	<br><b>Example of TasKey Interface</b>
 </p>
 
 ## Instillation
+
+## Getting Started
+
+ <br>
+ <p align='center'>
+	<img src='./Resources/TasKey_Components.jpg', alt='Outline of TasKey Components' width='850' height='auto'>
+</p>
+
+## Usage/Command Line Syntax
+
+TasKey utilizes a simple command line interface, based around contextual "flags" (i.e. "-a", "-b", etc.) which can be accompanied (when needed) by a string containing additional information called an "attribute", together flags and attributes form "command pairs".
+
+**Great!... but what does that actually mean? How do we use it? Lets go through a few examples.**
+
+Lets start off with the simplest type of command, a standalone flag. Let's say we want to switch from the main task view to the archived task view (more on this later), the following simple command is used:
+
+```
+TasKey >> -a
+```
+
+Where ```-a``` is a flag and, and because it is not followed by a string containing more information (i.e. an "attribute"), it is considered to be "standalone". These types of commands are used for general purpose commands such as changing views, setting task priority, or closing TasKey. 
+
+When additional information is required flags may also be accompanied by a string called an "attribute". For example, when creating a new task, the following command is used: 
+
+```
+TasKey >> -n Send Jim the new working directory
+```
+
+Where ```-n``` is the flag used for creating a new task and ```Send Jim the new working directory``` is an attribute representing the name of the task, together they form a "command pair".
+
+Some commands may include more than one set of command pairs (flags/attributes). For example, we want to create the same task used in the last example, but this time we want to set it as a high priority and set a deadline:
+
+```
+TasKey >> -n Send Jim the new working directory -h -d 02202024
+```
+
+Where the ```-n Send Jim the new working directory``` command pair is used the same, but also included is the standalone flag ```-h``` which represents the tasks priority and the ```-d``` flag used to set a deadline paired with an attribute representing the deadline date, in this case ```02202024``` (Feb 20, 2024).
+
+Now that there are multiple flags being used, we must distinguish between "leader" and "follower" flags.
+
+<ul>
+	<li>Leader flags, as their name suggest, are the first flag used in a command (<code>-n</code> in the example above).</li>
+	<li>Follower flags are any flag that comes after the leader flag (<code>-h</code> and <code>-d</code> in the example above).</li>
+</ul>
+
+The order of follower flags is unimportant. For example, the command above could be reordered as follows and would have the same result:
+
+```
+TasKey >> -n Send Jim the new working directory -d 02202024 -h
+```
+
+However, leader flags must be chosen with care as they determine the interpretation of the follower flags. For example the flag ```-d``` used above, as a follower, is used to set a deadline... but as a leader flag, ```-d``` is used to delete a task.
+
+This is the basic format of all TasKey commands. Below are usage guides for all available TasKey command pairs.
+
+
+### Creating a New Task ```-n```
+
+### Editing a Task ```-e```
+
+
+
+
+
+
+
 
