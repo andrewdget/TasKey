@@ -111,8 +111,42 @@ However, leader flags must be chosen with care as they determine the interpretat
 
 This is the basic format of all TasKey commands. Below are usage guides for all available TasKey command pairs.
 
-
 ### Creating a New Task ```-n```
+
+Creating and new task is the most fundamental function of any task management application. With TasKey this can be done quickly with a standalone flag followed by the name of the task, the default settings will take care of the rest. For example:
+
+```
+TasKey >> -n Send Jim the new working directory
+```
+
+However, if more control is required (for example setting a level of priority for a task, or giving it a deadline for completion), the follower flags below, provide additional control:
+
+
+**Add a Footnote** ```-f``` [Attribute Required]<br>Allows for the inclusion of additional information, reminders, context, et cetera for the task. Footnotes are optional, if none is given, none will be included. For example:
+
+```
+TasKey >> -n Send Jim the new working directory -f The one created on Wednesday
+```
+
+**Set Task Priority** ```-l``` (low), ```-m``` (medium), ```-h``` (high), ```-c``` (critical) [Standalone Flag]<br>Task priority essentialy influences how quickly that task will be at the top of the task list. Naturaly, taks with higher priority will be prioritized over other task with similar deadlines/number of remaining working days to complete (see [theory of operation](url)). Furthermore, if a deadline is not manually set for the task, tasks priority determines the date that a deadline is automatically set (see [other settings](url)). If no priority is set, the priority defaults to medium. For example, creating a high priority task:
+
+```
+TasKey >> -n Send Jim the new working directory -h
+```
+
+**Set Task Deadline** ```-d``` [Formated Attribute Required]<br>All TasKey tasks are given a deadline at creation, if not done manualy, this deadline is set based on task priority (the default is medium, see [theory of operation](url) and [other settings](url)). However, when desired a task can be given a specific deadline (in MMDDYYYY) format, for example:
+
+```
+TasKey >> -n Send Jim the new working directory -d 02182024
+```
+
+**New Task Follower Flag Summary**
+
+| Action |   Follower Flags   | Default |
+| --- | --- | --- |
+| Add Footnote | ```-f``` | ```None``` |
+| Set Priority | ```-l```, ```-m```, ```-h```, ```-c``` | ```-m``` |
+| Set Deadline | ```-d```| Set automaticaly by priority. |
 
 ### Editing a Task ```-e```
 
