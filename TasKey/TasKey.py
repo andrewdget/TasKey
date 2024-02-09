@@ -4,6 +4,15 @@
 	slashes
 
 Bugs/Required Fixes:
+- When switching tabs while in Archive view, view does not reset
+- Editing deadline of existing task results in string, not using Str2Date
+	function
+- When viewing additional information, priority should have first letter
+	capitalized
+- implement capitalization agnostic flags/alpha indices
+	* Accidentally using a uppercase flag can result in unintentionally not
+		accepting a follower flag/pair in a way that is not obvious to the user
+		(as a default gets used instead)
 
 To-Do:
 
@@ -14,6 +23,9 @@ Future Features:
 - internal tab creation
 - add function for transferring tasks between tabs
 - implement keyboard shortcut functionality (for calling application)
+- database refreshing (for use with shared databases)
+- more robust save/load location error handling and ability to change save
+	location while in operation
 
 '''
 
