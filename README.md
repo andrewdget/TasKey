@@ -109,6 +109,19 @@ TasKey >> -n Send Jim the new working directory -d 02202024 -h
 
 However, leader flags must be chosen with care as they determine the interpretation of the follower flags. For example the flag ```-d``` used above, as a follower, is used to set a deadline... but as a leader flag, ```-d``` is used to delete a task.
 
+Now, what if we want to do something to an existing task, say mark a task complete? How do we select existing tasks? The answer is an "alpha index". An alpha index consists of two letters which represent a numerical index (for example ```aa```, ```bd```, and ```gi``` would respectivly represent the XXXX, XXXX, and XXXX items of a list).
+
+Lets say we have the following task list:
+
+!!INSERT IMAGE!!
+
+we could use the command 
+
+
+Alpha indicies are used rather than numerical indicies for their speed/ease of typing. 
+
+
+
 This is the basic format of all TasKey commands. Below are usage guides for all available TasKey command pairs.
 
 ### Creating a New Task ```-n```
@@ -150,7 +163,47 @@ TasKey >> -n Send Jim the new working directory -d 02182024
 
 ### Editing a Task ```-e```
 
+Editing a task works much the same way as creating one, with all the same flag/attribute pairs. With two exceptions, the necessity of including a "alpha index" (which tells TasKey which task you would like to eidit) and the addition of the ```-n``` flag used to edit a task's name. 
 
+**Edit Task Name** ```-n``` [Attribute Required]<br>
+
+**Edit Task Footnote** ```-f``` [Attribute Required]<br>
+
+**Edit Task Priority** ```-l``` (low), ```-m``` (medium), ```-h``` (high), ```-c``` (critical) [Standalone Flag]<br>
+
+**Edit Task Deadline** ```-d``` [Formated Attribute Required]<br>
+
+### Displaying Additional Task Information ```-i```
+
+### Completing a Task ```-c```
+
+### Deleting a Task ```-d```
+
+Remember... different behavior between main view and archive view. 
+
+### Switching to Archived Tasks View ```-a```
+
+### Returning to Main Task View ```-m```
+
+### Switching Tabs ```-t```
+
+### Saveing TasKey Databse ```-s```
+
+Whenever TasKey is closed/killed the it automaticaly attempts to save a new version of the database. However, for long sessions it may be desirable to save the database without closing the application. This can be achived with the standalone ```-s``` flag.
+
+### Prune
+
+Maintaining the integrety of a TasKey task database is critical. As such, every time TasKey needs to save new data
+
+prune command. 
+
+### Kill
+
+### Creating and Managing Tabs
+
+### Customizing TasKey Appearance
+
+### Other Settings
 
 
 
