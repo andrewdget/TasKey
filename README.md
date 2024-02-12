@@ -37,7 +37,7 @@ v0.0.0 (XX Feb, 2024)
 
 TasKey is a ASCII based task ("to-do") management tool that is **powerful, simple, and fast.**
 
-Many products (not just software) try to pack in so many "features" that they compromise the "easy of use" or functionality of their primary function. Conversely, there are few minimalist products that perform a single function, strive to do it well, and do nothing else... not as the result of a lack of ability, but rather clarity of purpose. 
+Many products (not just software) try to pack in so many "features" that they compromise the "easy of use" and/or functionality of their primary function. Conversely, there are very few minimalist products that perform a single function, strive to do it well, and do nothing else... not as the result of a lack of ability, but rather clarity of purpose. 
 
 TasKey takes inspiration from the latter. It's core design principle is to provide a task management tool that is **just powerful enough to be effective while remaining easy and fast to use.** In other words you can track/manage your tasks and then get back to whatever you were doing before! Keeping track of your tasks shouldn't become a task in and of itself.
 
@@ -46,7 +46,7 @@ For these reasons, TasKey uses:
 <ul>
 	<li>Keyboard only inputs, striking a balance between speed and simplicity.</li>
 	<li>A simple but effective task management algorithm (see <a href="url">Theory of Operation</a> section) which dynamically places the most important/near-term tasks on top and lower priority tasks below.</li>
-	<li>A clean, easy to read "at a glance" format.</li>
+	<li>A clean, light weight, and easy to read "at a glance" format.</li>
 	<li>Both local and collaborative task management (see <a href="url">Creating/Managing Tabs</a> section) .</li>
 </ul>
 
@@ -66,7 +66,7 @@ For these reasons, TasKey uses:
 
 ## Usage/Command Line Syntax
 
-TasKey utilizes a simple command line interface, based around contextual "flags" (i.e. "-a", "-b", etc.) which can be accompanied (when needed) by a string containing additional information called an "attribute", together flags and attributes form "command pairs".
+TasKey utilizes a simple command line interface, based around and alphabetical index and contextual "flags" (i.e. "-a", "-b", etc.) which can be accompanied (when needed) by a string containing additional information called an "attribute", together flags and attributes form "command pairs".
 
 **Great!... but what does that actually mean? How do we use it? Lets go through a few examples.**
 
