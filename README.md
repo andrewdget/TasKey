@@ -1,6 +1,3 @@
-1. Add note about how progress bar precentages are calculated.
-2. Add note about keyboard scrolling. 
-3. Add note about windows/shared save location forward slashes. 
 
 # TasKey
 
@@ -41,11 +38,11 @@ Many products (not just software) try to pack in so many "features" that they co
 
 TasKey takes inspiration from the latter. It's core design principle is to provide a task management tool that is **just powerful enough to be effective while remaining easy and fast to use.** In other words you can track/manage your tasks and then get back to whatever you were doing before! Keeping track of your tasks shouldn't become a task in and of itself.
 
-For these reasons, TasKey uses:
+Key features of TasKey:
 
 <ul>
-	<li>Keyboard only inputs, striking a balance between speed and simplicity.</li>
-	<li>A simple but effective task management algorithm (see <a href="url">Theory of Operation</a> section) which dynamically places the most important/near-term tasks on top and lower priority tasks below.</li>
+	<li>Keyboard only inputstriking a balance between speed and simplicity.</li>
+	<li>Simple but effective task management algorithm (see <a href="url">Theory of Operation</a> section) which dynamically places the most important/near-term tasks on top and lower priority tasks below.</li>
 	<li>A clean, light weight, and easy to read "at a glance" format.</li>
 	<li>Both local and collaborative task management (see <a href="url">Creating/Managing Tabs</a> section) .</li>
 </ul>
@@ -207,6 +204,8 @@ prune command.
 
 
 
-
+1. Add note about how progress bar precentages are calculated.
+2. Add note about keyboard scrolling. 
+3. Add note about windows/shared save location forward slashes. 
 
 
