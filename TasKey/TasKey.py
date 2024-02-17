@@ -4,8 +4,6 @@
 	slashes
 
 Bugs/Required Fixes:
-- Editing deadline of existing task results in string, not using Str2Date
-	function
 - When viewing additional information, priority should have first letter
 	capitalized
 - implement capitalization agnostic flags/alpha indices

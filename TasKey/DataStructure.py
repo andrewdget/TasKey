@@ -83,7 +83,7 @@ class TaskDB:
 					self.Active[index].deadline = None
 					self.Active[index].hard_deadline = False
 				else:
-					self.Active[index].deadline = attribute
+					self.Active[index].deadline = Str2Date(attribute)
 					self.Active[index].hard_deadline = True
 
 
