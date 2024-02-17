@@ -4,7 +4,6 @@
 	slashes
 
 Bugs/Required Fixes:
-- When switching tabs while in Archive view, view does not reset
 - Editing deadline of existing task results in string, not using Str2Date
 	function
 - When viewing additional information, priority should have first letter
@@ -16,9 +15,11 @@ Bugs/Required Fixes:
 - When trying to eliminate a footnote or a deadline, DataStructure.py is expects
 	```None``` rather than string.
 - One can "complete" already completed tasks which results in a duplicate of the
-	task being added to the archive DB.
+	task being added to the archive DB. May occur with other commands such as
+	restoring already active tasks. 
 
 To-Do:
+- Create setting that allows TasKey font size to be adjusted.
 
 Future Features:
 - add option for encrypting data

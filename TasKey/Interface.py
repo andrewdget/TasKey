@@ -584,6 +584,7 @@ class TasKeyUI:
 				self.current_win = command
 			elif target == 'tab':
 				self.current_tab = command
+				self.current_win = 'Active'
 			elif target == 'msg':
 				self.CommandMsg(command)
 			elif target == 'save':

@@ -1,5 +1,13 @@
 # Change Log
 
+## beta (XXX XX, 2024)
+
+New Features:
+- Added documentation
+
+Bug Fixes:
+- When switching tabs from archive view, TasKey would not automaticaly reset to main view.
+
 ## alpha2 (Jan 27, 2024)
 
 <ul>
