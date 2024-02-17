@@ -4,17 +4,19 @@
 	slashes
 
 Bugs/Required Fixes:
-- When viewing additional information, priority should have first letter
+- when viewing additional information, priority should have first letter
 	capitalized
 - implement capitalization agnostic flags/alpha indices
 	* Accidentally using a uppercase flag can result in unintentionally not
 		accepting a follower flag/pair in a way that is not obvious to the user
 		(as a default gets used instead)
-- When trying to eliminate a footnote or a deadline, DataStructure.py is expects
+- when trying to eliminate a footnote or a deadline, DataStructure.py is expects
 	```None``` rather than string.
-- One can "complete" already completed tasks which results in a duplicate of the
+- one can "complete" already completed tasks which results in a duplicate of the
 	task being added to the archive DB. May occur with other commands such as
-	restoring already active tasks. 
+	restoring already active tasks.
+- when editing task deadline/priority, progress bars dont seem to always update
+	right away. 
 
 To-Do:
 - Create setting that allows TasKey font size to be adjusted.

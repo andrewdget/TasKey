@@ -62,10 +62,10 @@ class TaskDB:
 
 	def edit(self, command_pairs):
 		priorities = {
-			'-c': 'critical',
-		 	'-h': 'high',
-		 	'-m': 'medium',
-		 	'-l': 'low'
+			'-c': 'Critical',
+		 	'-h': 'High',
+		 	'-m': 'Medium',
+		 	'-l': 'Low'
 		 	}
 		flags = list(command_pairs.keys())
 		for flag in flags:
@@ -151,14 +151,14 @@ class TaskDB:
 		for task in self.Active:
 			if task.deadline <= threshold:
 				stats['total'] += 1
-				if task.priority == 'critical':
+				if task.priority == 'Critical':
 					stats['critical'] += 1
 		for task in self.Archive:
 			if task.deadline <= threshold:
 				if task.reason == 'completed':
 					stats['total'] += 1
 					stats['total_complete'] += 1
-					if task.priority == 'critical':
+					if task.priority == 'Critical':
 						stats['critical'] += 1
 						stats['critical_complete'] += 1
 		return stats
@@ -189,7 +189,7 @@ class ActiveTask:
 		self.footnote = footnote
 
 		if priority == None:
-			self.priority = 'medium'
+			self.priority = 'Medium'
 		else:
 			self.priority = priority
 
@@ -209,13 +209,13 @@ class ActiveTask:
 
 	def AutoDeadline(self):
 		''' generates a deadline for a task based on its priority '''
-		if self.priority == 'high':
+		if self.priority == 'High':
 			deadline = self.created + datetime.timedelta(weeks=self.config['high_period'])
-		elif self.priority == 'medium':
+		elif self.priority == 'Medium':
 			deadline = self.created + datetime.timedelta(weeks=self.config['medium_period'])
-		elif self.priority == 'low':
+		elif self.priority == 'Low':
 			deadline = self.created + datetime.timedelta(weeks=self.config['low_period'])
-		elif self.priority == 'critical':
+		elif self.priority == 'Critical':
 			deadline = self.created # critical tasks due the day of creation
 		return deadline
 
@@ -246,13 +246,13 @@ class ActiveTask:
 	def ScorePriority(self):
 		''' returns a "priority score" following a linear function with a slope
 		of 1 and intercept set by priority '''
-		if self.priority == 'critical':
+		if self.priority == 'Critical':
 			y_intercept = 0
-		elif self.priority == 'high':
+		elif self.priority == 'High':
 			y_intercept = 1
-		elif self.priority == 'medium':
+		elif self.priority == 'Medium':
 			y_intercept = 2
-		elif self.priority == 'low':
+		elif self.priority == 'Low':
 			y_intercept = 3
 		priority_score = self.remaining + y_intercept
 		return priority_score 
