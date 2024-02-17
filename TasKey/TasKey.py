@@ -13,6 +13,8 @@ Bugs/Required Fixes:
 	* Accidentally using a uppercase flag can result in unintentionally not
 		accepting a follower flag/pair in a way that is not obvious to the user
 		(as a default gets used instead)
+- When trying to eliminate a footnote or a deadline, DataStructure.py is expects
+	```None``` rather than string.
 
 To-Do:
 
