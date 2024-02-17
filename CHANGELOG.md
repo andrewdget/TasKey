@@ -1,6 +1,6 @@
 # Change Log
 
-## alpha2 (Feb, xx, 2024)
+## alpha2 (Jan 27, 2024)
 
 <ul>
 	<li><b>Complete overhaul of user interface - cleaner, easier to read, maximizes screen space, and vast improvement to availability of "at a glance" information.</b></li>
