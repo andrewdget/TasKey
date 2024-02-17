@@ -15,6 +15,8 @@ Bugs/Required Fixes:
 		(as a default gets used instead)
 - When trying to eliminate a footnote or a deadline, DataStructure.py is expects
 	```None``` rather than string.
+- One can "complete" already completed tasks which results in a duplicate of the
+	task being added to the archive DB.
 
 To-Do:
 
